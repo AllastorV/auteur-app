@@ -1,0 +1,123 @@
+name: Windows release candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload_compliant_bundle:
+        description: Upload the unsigned EXE together with matching FFmpeg source and notices after all gates pass
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: windows-2025
+    timeout-minutes: 90
+    steps:
+      - name: Check out reviewed source
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          persist-credentials: false
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Install MSYS2 UCRT64 build tools
+        uses: msys2/setup-msys2@fb197b72ce45fb24f17bf3f807a388985654d1f2 # v2.29.0
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            base-devel
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-nasm
+            mingw-w64-ucrt-x86_64-pkgconf
+            diffutils
+            tar
+            xz
+      - name: Install locked npm dependencies
+        shell: pwsh
+        run: npm ci
+      - name: Build verified five-source FFmpeg
+        shell: msys2 {0}
+        env:
+          MSYS2_PATH_TYPE: inherit
+        run: bash tools/build-ffmpeg.sh
+      - name: Bundle exact corresponding source
+        shell: pwsh
+        run: >-
+          node --input-type=module -e "import {bundleSources} from './tools/ffmpeg-sources.mjs'; await bundleSources('release-work/ffmpeg/sources','release-work/ffmpeg/Auteur-FFmpeg-Corresponding-Source.zip')"
+      - name: Extract distributed source ZIP into a clean directory
+        shell: pwsh
+        run: Expand-Archive 'release-work/ffmpeg/Auteur-FFmpeg-Corresponding-Source.zip' 'release-work/ffmpeg/rebuild-check'
+      - name: Independently rebuild from the distributed source ZIP
+        shell: msys2 {0}
+        env:
+          MSYS2_PATH_TYPE: inherit
+        run: |
+          cd release-work/ffmpeg/rebuild-check
+          bash tools/build-ffmpeg.sh
+          node -e 'const a=require("../build-record.json"), b=require("./release-work/ffmpeg/build-record.json"); if(JSON.stringify(a.sources)!==JSON.stringify(b.sources)||JSON.stringify(a.binary.imports)!==JSON.stringify(b.binary.imports)) process.exit(1)'
+      - name: Typecheck
+        shell: pwsh
+        run: npm run typecheck
+      - name: Run all tests against candidate FFmpeg
+        shell: pwsh
+        env:
+          RELEASE_CANDIDATE: '1'
+          AUTEUR_FFMPEG_EXE: ${{ github.workspace }}\release-work\ffmpeg\ffmpeg.exe
+        run: npm test -- --reporter=dot
+      - name: Build desktop and unpacked package
+        shell: pwsh
+        run: |
+          npm run build --workspace @storyboard/desktop
+          Push-Location apps/desktop
+          npx electron-builder --dir --config electron-builder.json --publish never
+          Pop-Location
+      - name: Audit actual package resources and imports
+        shell: msys2 {0}
+        run: >-
+          node tools/release-package-audit.mjs
+          apps/desktop/release/win-unpacked
+          release-work/ffmpeg/build-record.json
+          release-work/ffmpeg/SOURCE_SHA256SUMS.txt
+      - name: Smoke-test packaged app with fresh profile
+        shell: pwsh
+        run: node tools/smoke-packaged.mjs
+      - name: Create unsigned portable executable
+        shell: pwsh
+        run: |
+          node tools/ikon-gom.mjs
+          Push-Location apps/desktop
+          npx electron-builder --win portable --prepackaged release/win-unpacked --config electron-builder.json --publish never
+          Pop-Location
+      - name: Stage matching source and notices only after gates pass
+        shell: pwsh
+        run: |
+          $bundle = 'release-work/candidate-bundle'
+          New-Item -ItemType Directory -Force -Path $bundle | Out-Null
+          $portable = Get-ChildItem 'apps/desktop/release' -Filter '*.exe' -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $portable) { throw 'Portable EXE missing' }
+          Copy-Item $portable.FullName "$bundle/Auteur-Windows-unsigned.exe"
+          Copy-Item 'release-work/ffmpeg/Auteur-FFmpeg-Corresponding-Source.zip' $bundle
+          Copy-Item 'release-work/ffmpeg/build-record.json' $bundle
+          Copy-Item 'release-work/ffmpeg/SOURCE_SHA256SUMS.txt' $bundle
+          Copy-Item 'LICENSE' "$bundle/Auteur-LICENSE"
+          Copy-Item 'THIRD_PARTY_NOTICES.md' $bundle
+          Copy-Item 'CODE_SIGNING_POLICY.md' $bundle
+          Copy-Item 'docs/release/release-procedure.md' $bundle
+          $names = @('Auteur-Windows-unsigned.exe', 'Auteur-FFmpeg-Corresponding-Source.zip')
+          $names | ForEach-Object { $hash = (Get-FileHash "$bundle/$_" -Algorithm SHA256).Hash.ToLowerInvariant(); "$hash  $_" } | Set-Content "$bundle/SHA256SUMS.txt" -Encoding ascii
+          Get-Content "$bundle/SHA256SUMS.txt" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+          'Unsigned FFmpeg GPLv3 binary; matching source ZIP and notices are in the same bundle.' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+      - name: Upload compliant public bundle only when explicitly requested
+        if: ${{ success() && inputs.upload_compliant_bundle }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: auteur-unsigned-windows-with-source
+          path: release-work/candidate-bundle/*
+          if-no-files-found: error
+          retention-days: 7

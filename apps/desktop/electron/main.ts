@@ -210,7 +210,7 @@ function createWindow() {
         yanlisKelime: params.misspelledWord || undefined,
         oneriler: params.dictionarySuggestions,
         secimVar: params.selectionText.length > 0,
-        panoDolu: clipboard.readText().length > 0,
+        panoDolu: (await clipboard.readText()).length > 0,
         denetimVar: true,
       });
 

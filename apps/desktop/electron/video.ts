@@ -203,7 +203,7 @@ export async function renderVideo(
         // durumda da çıktı süresi zaman çizelgesiyle aynı kalır.
         command = command
           .input(job.audioPath)
-          .outputOptions(['-af apad', `-t ${total.toFixed(6)}`, '-c:a aac', '-b:a 192k']);
+          .outputOptions(['-af apad', `-t ${total.toFixed(6)}`, `-c:a ${job.format === 'webm' ? 'libopus' : 'aac'}`, '-b:a 192k']);
       }
 
       command =
