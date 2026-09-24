@@ -1,10 +1,10 @@
 # Auteur
 
-Auteur is a Windows desktop workspace for developing stories on the page and on screen. Write a screenplay, organize scenes with cards, draw timed storyboards, and build a fictional world map in the same project.
+Auteur is a Windows desktop workspace for writers. Draft a screenplay, TV script, novel, stage play, radio play, comic or plain text. Use story cards, timed storyboards and an editable world map when the story calls for them.
 
 ## What it includes
 
-- A screenplay editor with formatting, revisions, and PDF export.
+- Writing pages for screenplays, novels and other supported formats, with revisions and PDF export.
 - Story cards, a storyboard timeline, drawing tools, and animatic playback.
 - An editable world map for the places behind the story.
 - Local project files, with optional real-time collaboration through the web client and server.
