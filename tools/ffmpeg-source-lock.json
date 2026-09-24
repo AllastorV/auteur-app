@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sources": {
+    "ffmpeg": {
+      "version": "9.0.2",
+      "url": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz",
+      "sha256": "8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e",
+      "signatureUrl": "https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz.asc",
+      "signingFingerprint": "FCF986EA15E6E293A5644F10B4322F04D67658D8"
+    },
+    "x264": {
+      "commit": "b35605ace3ddf7c1a5d67a2eb553f034aef41d55",
+      "url": "https://code.videolan.org/videolan/x264/-/archive/b35605ace3ddf7c1a5d67a2eb553f034aef41d55/x264-b35605ace3ddf7c1a5d67a2eb553f034aef41d55.tar.gz",
+      "sha256": "cd71a7515b0e9a012e1ac9b1f8415bebcaf6fc97d4db32286642ac4c0fbe24f9"
+    },
+    "libvpx": {
+      "commit": "1024874c5919305883187e2953de8fcb4c3d7fa6",
+      "url": "https://chromium.googlesource.com/webm/libvpx/+archive/1024874c5919305883187e2953de8fcb4c3d7fa6.tar.gz",
+      "sha256": "e2a8db38c3e547bce611cccecd5937ca236f14534549d16d1a218352dd36f8d6"
+    },
+    "libopus": {
+      "version": "1.6.1",
+      "url": "https://downloads.xiph.org/releases/opus/opus-1.6.1.tar.gz",
+      "sha256": "6ffcb593207be92584df15b32466ed64bbec99109f007c82205f0194572411a1"
+    }
+  }
+}
