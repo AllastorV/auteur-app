@@ -1,0 +1,96 @@
+{
+  "appId": "com.auteur.app",
+  "productName": "Auteur",
+  "directories": {
+    "output": "release",
+    "buildResources": "build"
+  },
+  "files": [
+    "dist/**/*",
+    "dist-electron/**/*",
+    "package.json",
+    "!**/*.tsbuildinfo",
+    "!node_modules/@storyboard/**",
+    "!**/coverage/**",
+    "!**/tests/**",
+    "!**/test/**",
+    "!**/src/**",
+    "!**/*.ts",
+    "!**/*.map",
+    "!**/doc/**",
+    "!**/OLD/**",
+    "!**/tools/**",
+    "!**/.vscode/**",
+    "!**/Makefile",
+    "!**/example.js"
+  ],
+  "asarUnpack": [
+    "**/node_modules/ffmpeg-static/**"
+  ],
+  "mac": {
+    "category": "public.app-category.graphics-design",
+    "target": [
+      "dmg",
+      "zip"
+    ],
+    "icon": "build/icon.png"
+  },
+  "win": {
+    "target": [
+      "portable"
+    ],
+    "icon": "build/icon.ico",
+    "verifyUpdateCodeSignature": false,
+    "signAndEditExecutable": false
+  },
+  "linux": {
+    "target": [
+      "AppImage",
+      "deb"
+    ],
+    "category": "Graphics",
+    "icon": "build/icon.png"
+  },
+  "electronVersion": "33.4.11",
+  "npmRebuild": false,
+  "asar": true,
+  "fileAssociations": [
+    {
+      "ext": "sbp",
+      "name": "Auteur Projesi",
+      "description": "Auteur senaryo ve storyboard projesi",
+      "role": "Editor",
+      "icon": "build/dosya.ico"
+    }
+  ],
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Auteur",
+    "installerIcon": "build/icon.ico",
+    "uninstallerIcon": "build/icon.ico",
+    "installerHeaderIcon": "build/icon.ico",
+    "differentialPackage": false
+  },
+  "extraResources": [
+    {
+      "from": "build/dosya.ico",
+      "to": "dosya.ico"
+    },
+    {
+      "from": "../../LICENSE",
+      "to": "licenses/Auteur-LICENSE"
+    },
+    {
+      "from": "../../THIRD_PARTY_NOTICES.md",
+      "to": "licenses/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "from": "../../third_party_licenses",
+      "to": "licenses/fonts"
+    }
+  ]
+}

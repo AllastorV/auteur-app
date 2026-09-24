@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "tests/**/*.mts",
+    "packages/*/tests/**/*.ts",
+    "packages/*/tests/**/*.tsx",
+    "apps/*/tests/**/*.ts",
+    "apps/*/tests/**/*.tsx",
+    "vitest.config.ts",
+    "playwright.config.ts"
+  ]
+}

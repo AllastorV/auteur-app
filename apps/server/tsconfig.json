@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    /* `rootDir` `..` (yani `apps/`) — sunucu, §15.2'nin ATOMİK YAZIM kuralını
+       `apps/desktop/electron/atomik.ts`'ten ÇAĞIRIYOR, kendi kopyasını
+       yazmıyor (Karar 2: kural tek evde). O dosya kasten Electron'a bağlı
+       değil. `packages/core` bu görevde dokunulmaz alandı, iki uygulamanın
+       ortak erişebildiği tek yol buydu.
+       ⚠ TAVAN: sunucu tek başına paketlenirse bu göreli yol kırılır — ama
+       SESSİZ değil, modül yüklenirken patlar. */
+    "rootDir": "..",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "baseUrl": "../..",
+    "paths": {
+      "@storyboard/core": ["packages/core/src/index.ts"],
+      "@storyboard/core/*": ["packages/core/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "../desktop/electron/atomik.ts"],
+  "references": [{ "path": "../../packages/core" }]
+}

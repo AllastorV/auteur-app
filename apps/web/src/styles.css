@@ -1,0 +1,275 @@
+/* Kabuk yazı tipi — self-hosted. Electron çevrimdışı çalışıyor; Google
+   Fonts bağlantısı ilk açılışta yazı tipini hiç getirmezdi. */
+@import '@fontsource/ibm-plex-sans-condensed/400.css';
+@import '@fontsource/ibm-plex-sans-condensed/500.css';
+@import '@fontsource/ibm-plex-sans-condensed/600.css';
+
+/* KAĞIT YAZI TİPLERİ — self-hosted.
+ *
+ * Courier Prime bugüne kadar HİÇ YÜKLENMİYORDU: motor onun metrikleriyle
+ * ölçüyor ama ekran sistemdeki 'Courier New'a düşüyordu. İkisi de 10 cpi
+ * olduğu için genişlik tutuyordu, yani hata görünmezdi — ama Courier New
+ * bulunmayan bir sistemde `monospace` ne çıkarsa o çizilirdi ve ölçü
+ * ıraksardı.
+ *
+ * Tinos, Times New Roman ile METRİK UYUMLU. Times olmayan bir sistemde
+ * (çoğu Linux) `serif` başka bir yazıya düşer ve satır sayıları motorunkiyle
+ * tutmazdı — o yüzden gömülü. */
+@font-face{font-family:'Courier Prime';font-style:normal;font-weight:400;font-display:swap;
+  src:url('@expo-google-fonts/courier-prime/400Regular/CourierPrime_400Regular.ttf') format('truetype');}
+@font-face{font-family:'Courier Prime';font-style:italic;font-weight:400;font-display:swap;
+  src:url('@expo-google-fonts/courier-prime/400Regular_Italic/CourierPrime_400Regular_Italic.ttf') format('truetype');}
+@font-face{font-family:'Courier Prime';font-style:normal;font-weight:700;font-display:swap;
+  src:url('@expo-google-fonts/courier-prime/700Bold/CourierPrime_700Bold.ttf') format('truetype');}
+@font-face{font-family:'Tinos';font-style:normal;font-weight:400;font-display:swap;
+  src:url('@expo-google-fonts/tinos/400Regular/Tinos_400Regular.ttf') format('truetype');}
+@font-face{font-family:'Tinos';font-style:italic;font-weight:400;font-display:swap;
+  src:url('@expo-google-fonts/tinos/400Regular_Italic/Tinos_400Regular_Italic.ttf') format('truetype');}
+@font-face{font-family:'Tinos';font-style:normal;font-weight:700;font-display:swap;
+  src:url('@expo-google-fonts/tinos/700Bold/Tinos_700Bold.ttf') format('truetype');}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * B · KESME MASASI — bkz. DESIGN.md
+ *
+ * Karanlık oda, aydınlık sayfa. Sodyum amber, Steenbeck lambası.
+ * Köşe yuvarlaması YOK (durum noktaları hariç), kenarlar 1px, gölge
+ * yalnız sayfada.
+ */
+:root {
+  color-scheme: dark;
+
+  /* yüzeyler */
+  --mzn-zemin: #0e1013;
+  --mzn-cubuk: #14171c;
+  --mzn-panel: #12151a;
+  --mzn-sayfa-alani: #0a0c0e;
+  --mzn-denetim: #1a1f26;
+  --mzn-etkin: #1e232a;
+  --mzn-kutu: #1c2129;
+  --mzn-odak-zemin: #08090b;
+
+  /* kenarlar */
+  --mzn-kenar: #23282f;
+  --mzn-kenar-ic: #1e232a;
+  --mzn-kenar-denetim: #2b313a;
+  --mzn-ayirici: #262c34;
+
+  /* metin */
+  --mzn-metin: #eef1f5;
+  --mzn-metin-guclu: #d4d9e0;
+  --mzn-metin-govde: #c9cdd4;
+  --mzn-metin-ikincil: #a9b0bb;
+  --mzn-metin-sonuk: #8d95a3;
+  --mzn-metin-etiket: #6b7381;
+  --mzn-metin-zayif: #7d8593;
+  --mzn-metin-cok-zayif: #4d5563;
+  --mzn-metin-hayalet: #3a4049;
+
+  /* amber — TEK vurgu */
+  --mzn-amber: #e0932f;
+  --mzn-amber-hover: #f0ad55;
+  --mzn-amber-zemin: #2a2118;
+  --mzn-amber-kenar: #43331f;
+  --mzn-amber-uzeri: #16120b;
+  --mzn-amber-ayirici: #a86c1c;
+
+  /* durum */
+  --mzn-kayitli: #6f9a6f;
+  /* Kayıt göstergesinin başarısızlık rengi. Kabuğun amberiyle
+     çakışmasın diye tuğla kırmızısı: amber "dikkat", bu "olmadı". */
+  --mzn-hata: #d8544a;
+
+  /* YAPI RENKLERİ — kullanıcı kararı "P4" (2026-08-27).
+     Kural: renk YALNIZ yapı listesinde (sol gezgin) anlam taşır. Kağıt,
+     araç çubuğu ve düğmeler amber kalır; amber "eylem ve odak" demeye devam
+     eder. Bu tablo o kuralın TEK evi — bugüne kadar renkler bileşenlerin
+     içine serpiştirilmiş sabitlerdi (#5a4a80, #2a3550) ve bir kısmı
+     Tailwind'in kendi amber tonlarıydı, yani projenin paletinden bile
+     değildi. */
+  --mzn-yapi-baslik: #7fa8e0;
+  --mzn-yapi-kisi: #7fb08a;
+  --mzn-yapi-bag: #9b7fd0;
+  --mzn-yapi-bag-zemin: #241f36;
+  --mzn-yapi-bag-metin: #c2b0e8;
+  --mzn-yapi-bag-hover: #322a4a;
+
+  /* kağıt */
+  --mzn-kagit: #f7f5f0;
+  --mzn-kagit-metin: #1c1a17;
+  --mzn-kagit-sonuk: #a49d90;
+  --mzn-kagit-parantez: #6f695e;
+
+  --mzn-yazi: 'IBM Plex Sans Condensed', system-ui, -apple-system, sans-serif;
+  --mzn-mono: 'Courier Prime', 'Courier New', Courier, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--mzn-zemin);
+  color: var(--mzn-metin-govde);
+  font-family: var(--mzn-yazi);
+}
+
+/* Tarayıcının kendi yüzeyleri de tasarımın parçası: seçim, imleç, kaydırma
+   çubuğu ve odak halkası varsayılan bırakılırsa hiçbir sisteme ait olmazlar. */
+::selection {
+  background: var(--mzn-amber-zemin);
+  color: var(--mzn-metin);
+}
+.senaryo-metin ::selection,
+.mzn-kagit ::selection {
+  background: rgba(224, 147, 47, 0.28);
+  color: var(--mzn-kagit-metin);
+}
+
+* {
+  caret-color: var(--mzn-amber);
+}
+
+:focus-visible {
+  outline: 1px solid var(--mzn-amber);
+  outline-offset: 1px;
+}
+
+/* Diyalog KUTUSU odak halkası giymez.
+   Kutu açılınca klavye tuzağa düşmesin diye programatik olarak
+   odaklanıyor (`tabIndex={-1}`) ve tarayıcı bunu `:focus-visible`
+   sayıyor — sonuçta bütün diyalog amber bir çerçeveyle çevriliyordu.
+   Halka ETKİLEŞİMLİ denetimin işaretidir; kutu tıklanan bir şey değil. */
+[role='dialog']:focus-visible {
+  outline: none;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--mzn-panel);
+}
+::-webkit-scrollbar-thumb {
+  background: #2f3540;
+  border: 2px solid var(--mzn-panel);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3c434f;
+}
+::-webkit-scrollbar-corner {
+  background: var(--mzn-panel);
+}
+
+/* Ölçüm gösteren her sayı Courier: sayfa sayısı, kelime, süre, sahne no.
+   Kostüm değil — ölçü. */
+.mzn-sayi {
+  font-family: var(--mzn-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bölüm etiketi — panellerde tek başlık dili. */
+.mzn-etiket {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mzn-metin-etiket);
+}
+
+/* Denetim yüzeyi: düğme, seçici, giriş. Bitişik denetimler `border-left:0`
+   ile birleşir. */
+.mzn-denetim {
+  background: var(--mzn-denetim);
+  border: 1px solid var(--mzn-kenar-denetim);
+  color: var(--mzn-metin-guclu);
+}
+.mzn-denetim:hover:not(:disabled) {
+  border-color: #3a4250;
+  color: var(--mzn-metin);
+}
+.mzn-denetim:disabled {
+  opacity: 0.4;
+}
+
+/* Etkin/seçili durum — amber, dolgusuz. */
+.mzn-etkin {
+  background: var(--mzn-amber-zemin);
+  border: 1px solid var(--mzn-amber-kenar);
+  color: var(--mzn-amber);
+}
+
+/* Birincil eylem — tek dolu amber yüzey. */
+.mzn-birincil {
+  background: var(--mzn-amber);
+  color: var(--mzn-amber-uzeri);
+  font-weight: 600;
+}
+.mzn-birincil:hover:not(:disabled) {
+  background: var(--mzn-amber-hover);
+}
+
+/* Rozet. */
+.mzn-rozet {
+  font-size: 11px;
+  padding: 2px 7px;
+  background: var(--mzn-amber-zemin);
+  border: 1px solid var(--mzn-amber-kenar);
+  color: var(--mzn-amber);
+}
+
+/* ⚠ Bu üç geçiş DÜZEN özelliği canlandırıyor (`margin`, `height`) ve
+   kompozitör dostu değil — tasarım dedektörü haklı olarak işaretliyor.
+   Bilinçli istisna: panelin kayması, komşuların yer değiştirmesi DEMEK;
+   `transform` ile yapılsaydı panel kayar ama tuval büyümezdi, yani
+   hareketin söylediği şey olmazdı. Kural 60fps'e bağlı, kaydırmayla
+   sürülen animasyonları hedefliyor; buradaki 160ms'lik, kullanıcı
+   eylemiyle tetiklenen ve masaüstünde üç panelle sınırlı bir geçiş.
+   ÖLÇÜLDÜ değil, TARTILDI: ölçülebilir bir yavaşlama görülürse çekmeceyi
+   içeriğin ÜSTÜNE bindirmek (absolute) doğru yol olur.
+
+   Yan panellerin gizlenmesi — KAYARAK, aniden yok olarak değil.
+   Hareket panelin NEREYE gittiğini söylüyor: kenardan çıktığını gören
+   kullanıcı geri getirilebileceğini de bilir.
+
+   Animasyon `margin` üzerinde, `width` üzerinde DEĞİL: genişliği kullanıcı
+   ayırıcıyı sürükleyerek değiştiriyor ve orada geçiş olsaydı panel imlecin
+   180ms gerisinden gelirdi. Margin yalnız gizle/göster anında değişir.
+
+   160ms — yumuşak ama hızlı; `cubic-bezier(.32,.72,0,1)` sonu yavaşlayan,
+   başı hızlı bir eğri: panel önce kopar, sonra oturur. */
+.mzn-kaydir {
+  transition: margin 160ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Üst kabuk aynı süreyle çekilsin: paneller süzülürken araç çubuğunun
+   birden yok olması hareketi bozuk gösterir. */
+.mzn-kabuk-kaydir {
+  overflow: hidden;
+  transition: height 160ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Gizlenen panel hareketi BİTİNCE gerçekten yok olur.
+   Sadece kenarın dışına kaymak yetmez: kayan panel hâlâ odaklanabilir,
+   ekran okuyucuya okunur ve tıklamayı yakalayabilir. `visibility` geçişli
+   değil ama GECİKTİRİLEBİLİR — kapanırken 160ms sonra, açılırken hemen.
+   Böylece hem animasyon görünür hem de kapalı panel gerçekten kapalıdır. */
+.mzn-kaydir[data-gizli='evet'],
+.mzn-kabuk-kaydir[data-gizli='evet'] {
+  visibility: hidden;
+  transition-property: margin, height, visibility;
+  transition-delay: 0s, 0s, 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mzn-kaydir,
+  .mzn-kabuk-kaydir,
+  .mzn-kaydir[data-gizli='evet'],
+  .mzn-kabuk-kaydir[data-gizli='evet'] {
+    transition: none;
+  }
+}

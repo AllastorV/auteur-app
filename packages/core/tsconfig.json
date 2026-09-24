@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "./dist/types",
+    "rootDir": "./src",
+    "baseUrl": "../..",
+    "paths": {
+      "@storyboard/core": ["packages/core/src/index.ts"],
+      "@storyboard/core/*": ["packages/core/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

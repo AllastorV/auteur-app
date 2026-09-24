@@ -1,0 +1,47 @@
+node_modules/
+dist/
+dist-electron/
+release/
+!docs/release/
+out/
+.vite/
+*.tsbuildinfo
+.DS_Store
+coverage/
+playwright-report/
+test-results/
+.env
+.env.local
+site-dist/
+*.log
+
+# Local footage, real-app QA projects, and editable video work.
+release-work/
+
+# Third-party 3D models are downloaded separately, never checked in.
+apps/*/public/models/
+
+# Local data and tool workspaces.
+.storyboard-data/
+.impeccable/
+.claude/worktrees/
+.worktrees/
+.mutasyon-yedek/
+.yedek-cipa-varlik/
+
+# Design explorations, QA captures, and the superseded website draft.
+# The new cinematic website is maintained as a separate Sites project.
+/design/
+/evidence/
+/site/
+
+# Internal planning and temporary exports are not part of the source release.
+/docs/superpowers/
+/docs/research/
+/docs/specs/
+/docs/release/candidate-report.md
+/docs/release/gumroad-draft.md
+/docs/release/launch-checklist.md
+/docs/release/source-ledger.md
+/en-dokum.txt
+/fr-gecici.pdf

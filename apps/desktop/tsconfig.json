@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist/types",
+    "types": ["node", "vite/client"],
+    "baseUrl": "../..",
+    "paths": {
+      "@storyboard/core": ["packages/core/src/index.ts"],
+      "@storyboard/core/*": ["packages/core/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "electron/**/*.ts", "vite.config.mts"],
+  "references": [{ "path": "../../packages/core" }]
+}

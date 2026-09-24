@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webm binary
+*.glb binary
+
+# Test TLS malzemesi — satır sonu dönüşümü PEM ayrıştırmasını bozmasın
+tests/yardim/tls/*.crt -text
+tests/yardim/tls/*.key -text
