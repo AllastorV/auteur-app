@@ -25,7 +25,7 @@ Alternatives considered: retain the Gyan payload and manually collect its many e
 3. It produces `ffmpeg.exe`, a source ZIP containing the exact FFmpeg/x264/libvpx/libopus snapshots and build scripts, their license texts, a toolchain record and SHA-256 manifest.
 4. Electron Builder copies this executable to a dedicated resource path outside ASAR. Packaged runtime resolution uses that path; source/dev tests may continue using the existing `ffmpeg-static` fallback. Packaging explicitly excludes its Gyan executable and outdated Gyan notices.
 5. The release audit opens the actual Windows package, verifies the FFmpeg hash, source-manifest match, license files, absence of the Gyan payload and unexpected DLLs, and rejects tests, personal files, secrets and QA material.
-6. The candidate remains a GitHub Actions artifact until all gates pass. Publication is a separate manual step; no push or workflow dispatch silently publishes an EXE.
+6. The default manual workflow builds and tests without uploading an executable. A second explicitly enabled dispatch may upload one compliant bundle only after source, package and pre-upload local QA gates pass. Actions artifacts in this public repository are downloadable, so that upload is treated as first public binary distribution, not private staging. The bundle and run summary disclose the EXE, matching source ZIP, full notices, hashes and build instructions; GitHub Release publication remains a separate manual step.
 
 The public GitHub release contains the unsigned Auteur EXE, the matching FFmpeg source ZIP, the Auteur source commit, licenses, SHA-256 manifest, build instructions and an explicit unsigned warning. The release/download page links to the source ZIP on the same hosting service as the binary. The unpublished marketing website and Gumroad are not part of this step.
 
@@ -43,7 +43,7 @@ SignPath approval is an external decision, not a release gate that can be declar
 - A clean Windows build, typecheck, tests and package-content audit pass from the exact release commit.
 - A fresh Auteur profile successfully exports and reopens MP4/H.264 and WebM/VP9 animatics both with and without audio; cancellation preserves the previous output.
 - The public asset hashes match the tested candidate; no Gyan FFmpeg binary, proprietary asset or private project is included.
-- The unsigned release page and repository contain the required notices and working source links before public binary publication.
+- Before the first Actions artifact upload, the downloadable bundle and run summary provide the matching source and notices; before GitHub Release asset publication, the release page links to the same source ZIP and notices.
 - No SignPath application is described as submitted, no certificate as granted and no executable as signed without external confirmation and signature verification.
 
-Official references: [FFmpeg legal checklist](https://ffmpeg.org/legal.html), [FFmpeg 9.0.2 source](https://ffmpeg.org/download.html), [SignPath Foundation conditions](https://signpath.org/terms.html), [SignPath GitHub trusted builds](https://docs.signpath.io/trusted-build-systems/github).
+Official references: [FFmpeg legal checklist](https://ffmpeg.org/legal.html), [FFmpeg 9.0.2 source](https://ffmpeg.org/download.html), [SignPath Foundation conditions](https://signpath.org/terms.html), [SignPath GitHub trusted builds](https://docs.signpath.io/trusted-build-systems/github), [GitHub Actions artifact access](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts).
