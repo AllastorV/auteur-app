@@ -32,9 +32,11 @@ import { fileURLToPath } from 'node:url';
 const DEPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 const KOK = path.join(process.env.LOCALAPPDATA ?? '', 'electron-builder', 'Cache', 'winCodeSign');
+const YEREL = path.join(DEPO, 'node_modules', 'rcedit', 'bin', 'rcedit-x64.exe');
 
-/** Önbellekteki `rcedit-x64.exe` — sürüm klasörü değişebiliyor, aranıyor. */
+/** Pinli yerel `rcedit` öncelikli; eski paketlerde önbellek yedek yol. */
 function rceditBul() {
+  if (existsSync(YEREL)) return YEREL;
   if (!existsSync(KOK)) return null;
   for (const alt of readdirSync(KOK)) {
     const aday = path.join(KOK, alt, 'rcedit-x64.exe');
@@ -55,7 +57,7 @@ const rcedit = rceditBul();
 if (!rcedit) {
   /* SESSİZ GEÇMİYOR: ikonsuz bir exe üretip "tamam" demek, kullanıcıya
      Electron logosu göstermek demek. */
-  console.error('rcedit bulunamadı (winCodeSign önbelleği yok). İkon GÖMÜLMEDİ.');
+  console.error('rcedit bulunamadı (yerel paket veya winCodeSign önbelleği yok). İkon GÖMÜLMEDİ.');
   process.exit(1);
 }
 

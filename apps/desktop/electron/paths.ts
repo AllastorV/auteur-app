@@ -3,7 +3,7 @@ import os from 'node:os';
 import fs from 'node:fs';
 
 // Electron yalnızca ana süreçte vardır; test ortamında modül yüklenemez.
-function electronApp(): { getPath(name: string): string } | null {
+function electronApp(): { getPath(name: string): string; isPackaged: boolean } | null {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require('electron').app ?? null;
@@ -17,14 +17,22 @@ export function unpacked(p: string): string {
   return p.includes('app.asar') ? p.replace('app.asar', 'app.asar.unpacked') : p;
 }
 
+export function resolveFfmpegBinary(packaged: boolean, resourcesPath: string, devFallback: string | null): string | null {
+  const bundled = path.join(resourcesPath, 'ffmpeg', 'ffmpeg.exe');
+  if (packaged) return fs.existsSync(bundled) ? bundled : null;
+  return devFallback && fs.existsSync(devFallback) ? devFallback : null;
+}
+
 export function ffmpegPath(): string | null {
+  const app = electronApp();
+  // A packaged release must never load the development-only Gyan binary.
+  if (app?.isPackaged) return resolveFfmpegBinary(true, process.resourcesPath, null);
   try {
-    // ffmpeg-static varsayılan dışa aktarımı ikili dosyanın mutlak yoludur.
     const mod = require('ffmpeg-static');
     const raw: string | null = typeof mod === 'string' ? mod : mod?.default ?? null;
     if (!raw) return null;
     const resolved = unpacked(raw);
-    return fs.existsSync(resolved) ? resolved : fs.existsSync(raw) ? raw : null;
+    return resolveFfmpegBinary(false, process.resourcesPath ?? '', resolved);
   } catch {
     return null;
   }

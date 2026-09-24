@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile, mkdir, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const SOURCE_NAMES = ['ffmpeg', 'x264', 'libvpx', 'libopus'];
+const SOURCE_NAMES = ['ffmpeg', 'x264', 'libvpx', 'libopus', 'zlib'];
 const RELEASE_FINGERPRINT = 'FCF986EA15E6E293A5644F10B4322F04D67658D8';
 
 export function verifySha256(bytes, expected) {
@@ -13,20 +13,24 @@ export function verifySha256(bytes, expected) {
   if (actual !== expected.toLowerCase()) throw new Error('Source SHA-256 mismatch');
 }
 
-function archiveDetails(name, source) {
+export function archiveDetails(name, source) {
   if (!source || typeof source !== 'object') throw new Error(`Invalid ${name} source`);
-  if (name === 'ffmpeg' || name === 'libopus') {
+  if (name === 'ffmpeg' || name === 'libopus' || name === 'zlib') {
     if (!/^\d+\.\d+(?:\.\d+)?$/.test(source.version)) throw new Error(`Invalid ${name} version`);
     const filename = name === 'ffmpeg'
       ? `ffmpeg-${source.version}.tar.xz`
-      : `opus-${source.version}.tar.gz`;
+      : name === 'zlib' ? `zlib-${source.version}.tar.gz` : `opus-${source.version}.tar.gz`;
     const prefix = name === 'ffmpeg'
       ? 'https://ffmpeg.org/releases/'
-      : 'https://downloads.xiph.org/releases/opus/';
+      : name === 'zlib' ? 'https://zlib.net/fossils/' : 'https://ftp.osuosl.org/pub/xiph/releases/opus/';
     if (name === 'ffmpeg' && (
       source.signatureUrl !== `${prefix}${filename}.asc`
       || source.signingFingerprint !== RELEASE_FINGERPRINT
     )) throw new Error('Invalid FFmpeg release signature identity');
+    if (name === 'libopus' && source.originUrl !==
+        `https://downloads.xiph.org/releases/opus/${filename}`) {
+      throw new Error('Invalid Xiph source origin URL');
+    }
     return { filename, url: `${prefix}${filename}` };
   }
   if (!/^[0-9a-f]{40}$/.test(source.commit)) throw new Error(`Invalid ${name} commit`);
@@ -42,7 +46,7 @@ export async function fetchLockedSources(lockFile, outDir) {
   if (lock.schemaVersion !== 1 || !lock.sources ||
       Object.keys(lock.sources).length !== SOURCE_NAMES.length ||
       SOURCE_NAMES.some((name) => !Object.hasOwn(lock.sources, name))) {
-    throw new Error('Source lock must contain exactly FFmpeg, x264, libvpx and libopus');
+    throw new Error('Source lock must contain exactly FFmpeg, x264, libvpx, libopus and zlib');
   }
   const inputs = SOURCE_NAMES.map((name) => {
     const source = lock.sources[name];
@@ -85,3 +89,5 @@ export async function fetchLockedSources(lockFile, outDir) {
   }
   return destination;
 }
+
+export { bundleSources } from './ffmpeg-source-bundle.mjs';

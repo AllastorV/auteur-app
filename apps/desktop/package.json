@@ -14,7 +14,6 @@
     "paketle:tasinabilir": "npm run build && electron-builder --dir --config electron-builder.json && node ../../tools/ikon-gom.mjs && electron-builder --win portable --prepackaged release/win-unpacked --config electron-builder.json"
   },
   "dependencies": {
-    "ffmpeg-static": "^5.2.0",
     "fluent-ffmpeg": "^2.1.3"
   },
   "devDependencies": {

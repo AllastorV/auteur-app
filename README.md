@@ -23,3 +23,5 @@ For collaboration, start `npm run dev:server` and `npm run dev:web` in separate 
 ## License
 
 Auteur's source code is licensed under [GPL-3.0-only](LICENSE). Your writing, drawings, maps, and exports remain yours. See the [license summary](LICENSE-SUMMARY.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
+
+Windows builds are not yet signed; see the [Code signing policy](CODE_SIGNING_POLICY.md).

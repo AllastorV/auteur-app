@@ -4,6 +4,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { listPackage } from '@electron/asar';
+import { auditFfmpegBundle } from './ffmpeg-package-audit.mjs';
+
+export { auditFfmpegBundle };
 
 const DENIED_DIRS = new Set([
   '.git', '.github', '.superpowers', '__tests__', 'tests', 'test', 'qa',
@@ -18,6 +21,8 @@ export function auditPackageEntries(entries) {
   const rejected = entries.filter((entry) => {
     if (typeof entry !== 'string') return true;
     const normalized = entry.replaceAll('\\', '/');
+    if (normalized.toLowerCase().endsWith('/ffmpeg.exe') &&
+        normalized.toLowerCase() !== 'resources/ffmpeg/ffmpeg.exe') return true;
     const parts = normalized.split('/');
     if (!normalized || normalized.startsWith('/') || /^[a-zA-Z]:/.test(normalized)) return true;
     if (parts.some((part) => !part || part === '.' || part === '..')) return true;
@@ -73,23 +78,27 @@ function missingRequired(entries) {
     ['IBM Plex OFL', (entry) => entry === 'resources/licenses/fonts/ibm-plex-sans-condensed-OFL.txt'],
     ['Electron license', (entry) => entry === 'LICENSE.electron.txt'],
     ['Chromium licenses', (entry) => entry === 'LICENSES.chromium.html'],
-    ['FFmpeg runtime', (entry) => entry.endsWith('/node_modules/ffmpeg-static/ffmpeg.exe')],
-    ['FFmpeg license', (entry) => entry.endsWith('/node_modules/ffmpeg-static/ffmpeg.exe.LICENSE')],
-    ['FFmpeg build README', (entry) => entry.endsWith('/node_modules/ffmpeg-static/ffmpeg.exe.README')],
+    ['FFmpeg runtime', (entry) => entry === 'resources/ffmpeg/ffmpeg.exe'],
+    ['FFmpeg build record', (entry) => entry === 'resources/ffmpeg/build-record.json'],
+    ...['ffmpeg-GPLv3.txt', 'ffmpeg-LICENSE.md', 'x264-COPYING.txt',
+      'libvpx-LICENSE.txt', 'libvpx-PATENTS.txt', 'libopus-COPYING.txt', 'zlib-LICENSE.txt']
+      .map((name) => [`FFmpeg license ${name}`, (entry) => entry === `resources/licenses/ffmpeg/${name}`]),
   ];
   return required.filter(([, found]) => !entries.some(found)).map(([label]) => label);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
-    if (process.argv.length !== 3) throw new Error('Usage: node tools/release-package-audit.mjs <win-unpacked>');
+    if (process.argv.length !== 5) throw new Error('Usage: node tools/release-package-audit.mjs <win-unpacked> <build-record.json> <SOURCE_SHA256SUMS.txt>');
     const entries = collectPackageEntries(process.argv[2]);
     const result = auditPackageEntries(entries);
     const missing = missingRequired(entries);
+    const ffmpeg = auditFfmpegBundle(process.argv[2], process.argv[3], process.argv[4]);
     console.log(`Audited ${entries.length} ASAR and loose package entries.`);
     for (const entry of result.rejected) console.error(`REJECTED ${entry}`);
     for (const label of missing) console.error(`MISSING ${label}`);
-    if (!result.ok || missing.length) process.exitCode = 1;
+    for (const error of ffmpeg.errors) console.error(`FFMPEG ${error}`);
+    if (!result.ok || missing.length || !ffmpeg.ok) process.exitCode = 1;
     else console.log('Portable package content and required notices: PASS');
   } catch (error) {
     console.error(`Package audit failed: ${error instanceof Error ? error.message : String(error)}`);

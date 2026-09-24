@@ -24,7 +24,10 @@
     "@electron/asar": "3.4.1",
     "@playwright/test": "^1.49.0",
     "@types/node": "^22.10.0",
+    "ffmpeg-static": "^5.2.0",
     "jsdom": "^25.0.1",
+    "jszip": "^3.10.1",
+    "rcedit": "5.0.2",
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
     "vitest": "5.0.1"

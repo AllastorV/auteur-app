@@ -1,7 +1,7 @@
 # Auteur Windows release: source-built FFmpeg and SignPath design
 
 Date: 2026-09-24
-Status: design approved in chat; written-spec review pending
+Status: approved design; implementation and release gates in progress
 Scope: the existing public `AllastorV/auteur-app` repository and its Windows portable release. The website and Gumroad listing stay unpublished.
 
 ## Goal and constraints
@@ -12,7 +12,7 @@ The current `ffmpeg-static@5.3.0` Windows payload is a Gyan FFmpeg 6.1.1 GPLv3 b
 
 ## Chosen approach
 
-Build a deliberately small GPLv3 FFmpeg on a GitHub-hosted Windows runner using MSYS2 UCRT64. Use the official FFmpeg 9.0.2 source release, official VideoLAN x264 source, official WebM libvpx source and official Xiph libopus 1.6.1 source. Pin all four to immutable source identities in a checked-in lock manifest: tarball SHA-256 values and full Git commits where Git is used. The implementation selects stable x264 and libvpx commits once, records their full identities, and CI rejects a moving branch or tag as a build input.
+Build a deliberately small GPLv3 FFmpeg on a GitHub-hosted Windows runner using MSYS2 UCRT64. Use the official FFmpeg 9.0.2 source release, official VideoLAN x264 source, official WebM libvpx source and official Xiph libopus 1.6.1 source, and official zlib 1.3.2 source for PNG decoding. Pin all five to immutable source identities in a checked-in lock manifest: tarball SHA-256 values and full Git commits where Git is used. The implementation selects stable x264 and libvpx commits once, records their full identities, and CI rejects a moving branch or tag as a build input.
 
 The required capabilities are PNG frame input; native decoding of MP3, WAV, M4A, AAC and Ogg audio; native AAC output for MP4; libopus output for WebM; libx264 H.264; and libvpx VP9. The current shared audio path requests AAC even for WebM, so the implementation must select Opus for WebM. The build disables automatic optional dependency discovery and non-free components. General-purpose compiler/build tools are recorded by version. Any non-system runtime DLL dependency must either be removed by static linking or shipped with its own source and notice; an unexpected import fails the release audit. The Gyan executable is excluded from release artifacts.
 
@@ -21,8 +21,8 @@ Alternatives considered: retain the Gyan payload and manually collect its many e
 ## Build and package flow
 
 1. A manual GitHub Actions release-candidate workflow checks out one reviewed public commit and installs pinned or recorded MSYS2 toolchain packages.
-2. The workflow downloads only the locked source archives/commits, verifies their identities, builds x264, libvpx and libopus, then builds FFmpeg. Build scripts and configure flags live in the Auteur repository.
-3. It produces `ffmpeg.exe`, a source ZIP containing the exact FFmpeg/x264/libvpx/libopus snapshots and build scripts, their license texts, a toolchain record and SHA-256 manifest.
+2. The workflow downloads only the locked source archives/commits, verifies their identities, builds zlib, x264, libvpx and libopus, then builds FFmpeg. Build scripts and configure flags live in the Auteur repository.
+3. It produces `ffmpeg.exe`, a source ZIP containing the exact FFmpeg/x264/libvpx/libopus/zlib snapshots and build scripts, their license texts, a toolchain record and SHA-256 manifest.
 4. Electron Builder copies this executable to a dedicated resource path outside ASAR. Packaged runtime resolution uses that path; source/dev tests may continue using the existing `ffmpeg-static` fallback. Packaging explicitly excludes its Gyan executable and outdated Gyan notices.
 5. The release audit opens the actual Windows package, verifies the FFmpeg hash, source-manifest match, license files, absence of the Gyan payload and unexpected DLLs, and rejects tests, personal files, secrets and QA material.
 6. The default manual workflow builds and tests without uploading an executable. A second explicitly enabled dispatch may upload one compliant bundle only after source, package and pre-upload local QA gates pass. Actions artifacts in this public repository are downloadable, so that upload is treated as first public binary distribution, not private staging. The bundle and run summary disclose the EXE, matching source ZIP, full notices, hashes and build instructions; GitHub Release publication remains a separate manual step.

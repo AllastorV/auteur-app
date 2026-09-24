@@ -24,9 +24,6 @@
     "!**/Makefile",
     "!**/example.js"
   ],
-  "asarUnpack": [
-    "**/node_modules/ffmpeg-static/**"
-  ],
   "mac": {
     "category": "public.app-category.graphics-design",
     "target": [
@@ -91,6 +88,18 @@
     {
       "from": "../../third_party_licenses",
       "to": "licenses/fonts"
+    },
+    {
+      "from": "../../release-work/ffmpeg/ffmpeg.exe",
+      "to": "ffmpeg/ffmpeg.exe"
+    },
+    {
+      "from": "../../release-work/ffmpeg/build-record.json",
+      "to": "ffmpeg/build-record.json"
+    },
+    {
+      "from": "../../release-work/ffmpeg/licenses",
+      "to": "licenses/ffmpeg"
     }
   ]
 }
