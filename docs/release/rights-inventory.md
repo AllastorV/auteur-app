@@ -1,6 +1,6 @@
 # Auteur release rights inventory — 2026-09-24
 
-Preparation record, not legal advice or permission to publish. The repository remains private. This inventory separates Auteur-owned work from bundled third-party work; `GPL-3.0-only` will describe Auteur's new source release, not relicense an OFL font, Electron, Chromium, or FFmpeg.
+Release rights record, not legal advice. This record does not clear public binary distribution. This inventory separates Auteur-owned work from bundled third-party work; `GPL-3.0-only` will describe Auteur's new source release, not relicense an OFL font, Electron, Chromium, or FFmpeg.
 
 ## Provenance and relicensing authority
 
