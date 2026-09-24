@@ -1,6 +1,8 @@
 {
   "name": "@storyboard/desktop",
   "version": "0.1.0",
+  "description": "Auteur desktop app for screenwriting, storyboarding, and worldbuilding",
+  "author": "AllastorV",
   "private": true,
   "main": "dist-electron/main.cjs",
   "scripts": {
@@ -22,8 +24,8 @@
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
-    "electron": "^33.2.1",
-    "electron-builder": "^25.1.8",
+    "electron": "44.4.5",
+    "electron-builder": "26.15.3",
     "jszip": "^3.10.1",
     "postcss": "^8.4.49",
     "react": "^18.3.1",

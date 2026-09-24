@@ -51,7 +51,7 @@
     "category": "Graphics",
     "icon": "build/icon.png"
   },
-  "electronVersion": "33.4.11",
+  "electronVersion": "44.4.5",
   "npmRebuild": false,
   "asar": true,
   "fileAssociations": [

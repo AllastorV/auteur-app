@@ -11,7 +11,7 @@ Auteur is a Windows desktop workspace for writers. Draft a screenplay, TV script
 
 ## Run from source
 
-Requires Node.js 20 or newer.
+Requires Node.js 22.12+ (22, 24, or 26+).
 
 ```bash
 npm ci

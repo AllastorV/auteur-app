@@ -39,6 +39,9 @@ export default defineConfig({
   test: {
     environment: 'node',
     setupFiles: [path.resolve(__dirname, 'tests/kurulum-dil.ts')],
+    // Bound parallel servers and HTTP fixtures; unbounded workers intermittently
+    // reset sockets in the large-body security test on Windows.
+    maxWorkers: 4,
     // `.tsx` de dahil: F1b-2'den itibaren bileşen testleri var. Yalnız `.ts`
     // aramak bir bileşen testini SESSİZCE koşmadan bırakır — dosya yeşil
     // sayılmaz, hiç görülmez.
