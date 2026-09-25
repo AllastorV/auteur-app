@@ -17,6 +17,10 @@ afterEach(() => {
 
 async function modul() {
   vi.resetModules();
+  /* Modül kaydı sıfırlanınca sözlük modülü de YENİDEN yükleniyor ve
+     ürün varsayılanına (İngilizce) dönüyor; bu dosyanın iddiaları Türkçe
+     (tests/kurulum-dil.ts sözleşmesi). */
+  (await import('@storyboard/core/dil/arayuz')).arayuzDiliniAyarla('tr');
   return import('@storyboard/core/disa/yazitipi');
 }
 

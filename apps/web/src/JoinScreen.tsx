@@ -149,7 +149,7 @@ export function JoinScreen({ onJoined }: { onJoined: (r: JoinResult) => void }) 
       <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
         <h1 className="text-lg font-semibold text-slate-100">Auteur</h1>
         <p className="mt-1 text-xs text-slate-400">
-          Ortak çalışma oturumuna katılın. Kurulum gerekmez — tarayıcıdan çalışır.
+          {t('Ortak çalışma oturumuna katılın. Kurulum gerekmez — tarayıcıdan çalışır.')}
         </p>
 
         <div className="mt-5 space-y-3">

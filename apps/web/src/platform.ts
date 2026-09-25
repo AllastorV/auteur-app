@@ -9,6 +9,7 @@ import {
   type RecentProject,
   type SaveResult,
 } from '@storyboard/core';
+import { t } from '@storyboard/core/dil/arayuz';
 
 const RECENT_KEY = 'storyboard:recent';
 const HISTORY_KEY = (projectId: string) => `storyboard:history:${projectId}`;
@@ -127,7 +128,7 @@ export const webPlatform: PlatformAdapter = {
 
   async readProjectFile(path: string) {
     const raw = localStorage.getItem(FILE_KEY(path)) ?? localStorage.getItem(`storyboard:file:${path}`);
-    if (!raw) throw new Error('Bu dosya tarayıcı deposunda bulunamadı.');
+    if (!raw) throw new Error(t('Bu dosya tarayıcı deposunda bulunamadı.'));
     return fromBase64(raw);
   },
 
@@ -157,7 +158,7 @@ export const webPlatform: PlatformAdapter = {
       localStorage.setItem(FILE_KEY(project.meta.id), encoded);
     } catch (err) {
       throw new Error(
-        'Tarayıcı deposu dolu — otomatik kayıt yapılamadı. Projeyi dosya olarak kaydedin.',
+        t('Tarayıcı deposu dolu — otomatik kayıt yapılamadı. Projeyi dosya olarak kaydedin.'),
       );
     }
   },
@@ -176,7 +177,7 @@ export const webPlatform: PlatformAdapter = {
       return list.map((v: any) => ({
         id: v.id,
         savedAt: v.savedAt,
-        label: 'Tarayıcı otomatik kaydı',
+        label: t('Tarayıcı otomatik kaydı'),
         size: v.size ?? 0,
       }));
     } catch {
@@ -201,7 +202,7 @@ export const webPlatform: PlatformAdapter = {
 
   async exportVideo(): Promise<SaveResult> {
     throw new Error(
-      'Animatik video dışa aktarma yalnızca masaüstü uygulamasında kullanılabilir (gömülü ffmpeg).',
+      t('Animatik video dışa aktarma yalnızca masaüstü uygulamasında kullanılabilir (gömülü ffmpeg).'),
     );
   },
 

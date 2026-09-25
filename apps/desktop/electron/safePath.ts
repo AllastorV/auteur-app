@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { AUTOSAVE_DIR, HISTORY_DIR } from './paths';
 import { readRecent } from './store';
+import { at } from './metin';
 
 /**
  * Renderer'dan gelen dosya yollarının doğrulanması.
@@ -44,18 +45,18 @@ function isInside(dir: string, target: string): boolean {
  */
 export function safeProjectPath(filePath: unknown): string {
   if (typeof filePath !== 'string' || !filePath.trim()) {
-    throw new Error('Geçersiz dosya yolu.');
+    throw new Error(at('Geçersiz dosya yolu.'));
   }
   const resolved = path.resolve(filePath);
   if (path.extname(resolved).toLowerCase() !== '.sbp') {
-    throw new Error('Yalnızca .sbp dosyaları açılabilir.');
+    throw new Error(at('Yalnızca .sbp dosyaları açılabilir.'));
   }
   if (allowedFiles.has(resolved)) return resolved;
   if (isInside(AUTOSAVE_DIR(), resolved)) return resolved;
   // "Son projeler" listesi kullanıcının daha önce dialog ile seçtiği
   // dosyalardan oluşur ve uygulamanın kendisi tarafından yazılır.
   if (readRecent().some((r) => path.resolve(r.path) === resolved)) return resolved;
-  throw new Error('Bu konuma erişim izni yok.');
+  throw new Error(at('Bu konuma erişim izni yok.'));
 }
 
 /**
@@ -76,15 +77,15 @@ export function safeChosenMediaPath(
   etiket: string,
 ): string {
   if (typeof filePath !== 'string' || !filePath.trim()) {
-    throw new Error(`Geçersiz ${etiket} yolu.`);
+    throw new Error(at('Geçersiz %s yolu.', at(etiket)));
   }
   const resolved = path.resolve(filePath);
   const uzanti = path.extname(resolved).toLowerCase().replace(/^\./, '');
   if (!uzantilar.includes(uzanti)) {
-    throw new Error(`Geçersiz ${etiket} uzantısı: ${uzanti || '(yok)'}`);
+    throw new Error(at('Geçersiz %s uzantısı: %s', at(etiket), uzanti || at('(yok)')));
   }
   if (!allowedFiles.has(resolved)) {
-    throw new Error(`Bu ${etiket} konumuna erişim izni yok.`);
+    throw new Error(at('Bu %s konumuna erişim izni yok.', at(etiket)));
   }
   return resolved;
 }
@@ -92,10 +93,10 @@ export function safeChosenMediaPath(
 /** Sürüm geçmişi kimliklerini doğrular — yol ayracı ya da `..` kabul etmez. */
 export function safeHistoryId(value: unknown, label: string): string {
   if (typeof value !== 'string' || !value.trim()) {
-    throw new Error(`Geçersiz ${label}.`);
+    throw new Error(at('Geçersiz %s.', at(label)));
   }
   if (value !== path.basename(value) || value === '.' || value === '..') {
-    throw new Error(`Geçersiz ${label}.`);
+    throw new Error(at('Geçersiz %s.', at(label)));
   }
   return value;
 }
@@ -105,10 +106,10 @@ export function safeVersionPath(projectId: string, versionId: string): string {
   const id = safeHistoryId(projectId, 'proje kimliği');
   const version = safeHistoryId(versionId, 'sürüm kimliği');
   if (path.extname(version).toLowerCase() !== '.sbp') {
-    throw new Error('Geçersiz sürüm kimliği.');
+    throw new Error(at('Geçersiz sürüm kimliği.'));
   }
   const dir = HISTORY_DIR(id);
   const target = path.resolve(dir, version);
-  if (!isInside(dir, target)) throw new Error('Geçersiz sürüm kimliği.');
+  if (!isInside(dir, target)) throw new Error(at('Geçersiz sürüm kimliği.'));
   return target;
 }

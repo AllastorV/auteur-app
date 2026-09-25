@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { useProjectStore } from '../../store/project';
 import { useUiStore } from '../../store/ui';
 import { blogaGit } from '../../store/mod';
@@ -61,7 +61,7 @@ export function AnalizPanosu() {
                   type="button"
                   data-testid={`sahne-cubuk-${s.sira}`}
                   className="flex w-full items-center gap-1 text-left"
-                  title={`${s.kelime} kelime · ${s.diyalogSatir} diyalog / ${s.aksiyonSatir} aksiyon`}
+                  title={tf('%d kelime · %d diyalog / %d aksiyon', s.kelime, s.diyalogSatir, s.aksiyonSatir)}
                   onClick={() => blogaGit(s.ilkBlokId)}
                 >
                   <span className="mzn-sayi w-5 shrink-0 text-right text-[10px] text-metin-cok-zayif">

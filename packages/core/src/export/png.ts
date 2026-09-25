@@ -1,6 +1,7 @@
 import JSZip from 'jszip';
 import type { Panel, Project } from '../model/types';
 import { DEFAULT_FILENAME_TEMPLATE, renderFileNameTemplate, safeFileName } from '../model/project-io';
+import { arayuzDili } from '../dil/arayuz';
 
 export interface PngSequenceOptions {
   fileNameTemplate?: string;
@@ -67,6 +68,6 @@ export function dataUrlToUint8(dataUrl: string): Uint8Array {
 export async function zipFrames(frames: PngFrame[], readme?: string): Promise<Uint8Array> {
   const zip = new JSZip();
   for (const f of frames) zip.file(f.fileName, dataUrlToUint8(f.dataUrl));
-  if (readme) zip.file('OKUBENI.txt', readme);
+  if (readme) zip.file(arayuzDili() === 'tr' ? 'OKUBENI.txt' : 'README.txt', readme);
   return zip.generateAsync({ type: 'uint8array' });
 }

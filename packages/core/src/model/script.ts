@@ -7,6 +7,7 @@
  */
 
 import { uid } from '../util/id';
+import { t } from '../dil/arayuz';
 
 export type ScriptBlockType =
   /* Senaryo / dizi / sahne oyunu / radyo oyunu ortak çekirdeği. */
@@ -395,10 +396,10 @@ function baslikSayfasinda(p: Element): boolean {
 /** Final Draft XML'ini bloklara ayırır. Tarayıcı ortamı gerektirir (DOMParser). */
 export function parseFdx(source: string): ScriptBlock[] {
   if (typeof DOMParser === 'undefined') {
-    throw new Error('.fdx okumak için tarayıcı ortamı gerekir.');
+    throw new Error(t('.fdx okumak için tarayıcı ortamı gerekir.'));
   }
   const doc = new DOMParser().parseFromString(source, 'application/xml');
-  if (doc.getElementsByTagName('parsererror').length) throw new Error('Geçersiz .fdx dosyası.');
+  if (doc.getElementsByTagName('parsererror').length) throw new Error(t('Geçersiz .fdx dosyası.'));
   const blocks: ScriptBlock[] = [];
   const seen = new Map<string, number>();
   let sceneCounter = 0;

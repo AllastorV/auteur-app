@@ -1,5 +1,6 @@
 import type { CreateSessionResponse, InviteResponse, JoinResponse } from './protocol';
 import type { Role } from '../model/types';
+import { t, tf } from '../dil/arayuz';
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   // Gövdesi olmayan isteklerde `content-type: application/json` gönderilmez;
@@ -14,8 +15,27 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   } catch {
     body = { error: text };
   }
-  if (!res.ok) throw new Error(body?.error ?? `Sunucu hatası (${res.status})`);
+  if (!res.ok) throw new Error(body?.error ? sunucuMetni(body.error) : tf('Sunucu hatası (%s)', res.status));
   return body as T;
+}
+
+/**
+ * Sunucunun gönderdiği mesaj İSTEMCİNİN arayüz dilinde gösterilir.
+ *
+ * Sunucu dili bilmiyor ve bilmemeli (protokol dilden bağımsız kalsın);
+ * mesajları kod tabanının geri kalanıyla aynı desende Türkçe ANAHTAR.
+ * Denetimde (2026-09-25) İngilizce arayüzdeki davet ve giriş hataları
+ * olduğu gibi Türkçe basılıyordu. Parametreli iki mesaj kalıpla çözülür;
+ * tanınmayan mesaj değişmeden döner (sessiz kayıp yok).
+ */
+export function sunucuMetni(mesaj: string): string {
+  const parola = mesaj.match(/^Parola en az (\d+) karakter olmalı\.$/);
+  if (parola) return tf('Parola en az %d karakter olmalı.', parola[1]);
+  const deneme = mesaj.match(/^Çok fazla deneme\. (\d+) saniye sonra tekrar deneyin\.$/);
+  if (deneme) return tf('Çok fazla deneme. %d saniye sonra tekrar deneyin.', deneme[1]);
+  const cozum = mesaj.match(/^Güncelleme çözümlenemedi: ([\s\S]*)$/);
+  if (cozum) return tf('Güncelleme çözümlenemedi: %s', cozum[1]);
+  return t(mesaj);
 }
 
 /**

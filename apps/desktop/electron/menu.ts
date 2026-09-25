@@ -1,4 +1,5 @@
 import { BrowserWindow, Menu, app, shell, type MenuItemConstructorOptions } from 'electron';
+import { anaDiliniAyarla } from './metin';
 
 /**
  * Uygulama menüsü — arayüz diliyle (varsayılan İngilizce) çizilir.
@@ -87,6 +88,7 @@ const mt = (tr: string): string => (aktifDil === 'tr' ? tr : MENU_EN[tr] ?? tr);
 /** Renderer dil değişimini bildirince menü bu dille YENİDEN kurulur. */
 export function menuDiliniAyarla(dil: ArayuzDili): void {
   aktifDil = dil;
+  anaDiliniAyarla(dil); // diyalog başlıkları ve ana süreç mesajları aynı dille
   Menu.setApplicationMenu(buildMenu());
 }
 

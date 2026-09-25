@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button } from '../dialogs/Modal';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { useProjectStore, projectActions } from '../../store/project';
 import {
   dunyalariSirala,
@@ -214,7 +214,7 @@ function DunyaKarti({
         data-testid={`dunya-sil-${dunya.ad}`}
         disabled={!duzenlenebilir}
         onClick={() => {
-          if (window.confirm(`"${dunya.ad}" silinsin mi?`)) projectActions.dunyaSil(doc, dunya.id);
+          if (window.confirm(tf('"%s" silinsin mi?', dunya.ad))) projectActions.dunyaSil(doc, dunya.id);
         }}
         className="mt-2 px-2 py-1 text-[10px] text-red-400 hover:text-red-300"
       >

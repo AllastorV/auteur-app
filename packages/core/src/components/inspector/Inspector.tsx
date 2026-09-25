@@ -498,7 +498,7 @@ function ObjectSection({
   };
 
   return (
-    <Section title={many ? `Seçim (${objects.length} obje)` : `Obje — ${first.name || first.kind}`}>
+    <Section title={many ? tf('Seçim (%d obje)', objects.length) : tf('Obje — %s', first.name || first.kind)}>
       <div className="grid grid-cols-2 gap-2">
         <Row label="X">
           <NumberField value={first.x} disabled={!editable} onChange={(v) => patch({ x: v })} />

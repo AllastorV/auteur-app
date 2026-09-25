@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { Modal, Button } from './Modal';
 import { usePlatform } from '../../platform/context';
 import { useProjectStore } from '../../store/project';
@@ -126,10 +126,10 @@ export function MuhurDialog({ onClose }: { onClose: () => void }) {
           bytes: paket.zip, dosyaAdi: ad, turAdi: t('Kanıt paketi'), uzantilar: ['zip'],
         });
         if (res.cancelled) showToast(t('Dışa aktarma iptal edildi.'), 'info');
-        else if (res.path) showToast(`Kaydedildi: ${res.path}`, 'success');
+        else if (res.path) showToast(tf('Kaydedildi: %s', res.path), 'success');
       } else {
         downloadBlob(new Blob([paket.zip as BlobPart], { type: 'application/zip' }), ad);
-        showToast(`${ad} indirildi.`, 'success');
+        showToast(tf('%s indirildi.', ad), 'success');
       }
     } catch (err) {
       showToast(`${t('Kanıt paketi üretilemedi')}: ${(err as Error).message}`, 'error');

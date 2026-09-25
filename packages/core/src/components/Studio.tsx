@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { kayitIcinProje } from '../doc/schema';
 import { t } from '../dil/arayuz';
+import { sunucuMetni } from '../collab/api';
 import { useProjectStore, ensureActivePanel, projectActions } from '../store/project';
 import { useUiStore } from '../store/ui';
 import { useCollabStore } from '../store/collab';
@@ -331,7 +332,7 @@ export function Studio() {
   useUnsavedGuard();
 
   useEffect(() => {
-    if (denial) showToast(`${t('Sunucu değişikliği reddetti')}: ${denial.reason}`, 'error');
+    if (denial) showToast(`${t('Sunucu değişikliği reddetti')}: ${sunucuMetni(denial.reason)}`, 'error');
   }, [denial, showToast]);
 
   if (!panel) return <EmptyProject canCreate={allowed('edit')} />;

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { usePlatform } from '../../platform/context';
 import { useProjectStore } from '../../store/project';
 import { useUiStore } from '../../store/ui';
@@ -9,7 +9,7 @@ import { createProject } from '../../model/factory';
 import type { RecentProject } from '../../platform/types';
 import { Ikon, type IkonAdi } from '../Ikon';
 import { Toast } from '../Toast';
-import { gununSozu, sozMetni } from './sozler';
+import { gununSozu, sozKimi, sozMetni } from './sozler';
 import { Kitap, KITAP_EN } from './Kitap';
 import { YeniProjeDialog, type YeniProjeSecimi } from './YeniProjeDialog';
 import { AyarlarDialog } from '../dialogs/AyarlarDialog';
@@ -68,7 +68,7 @@ export function Kitaplik({ onAcildi }: { onAcildi: () => void }) {
     } catch (err) {
       /* Sessizce yutulmuyor: dosya taşınmış ya da bozulmuş olabilir ve
          kullanıcı neden hiçbir şey olmadığını bilmeli. */
-      showToast(`Açılamadı: ${(err as Error).message}`, 'error');
+      showToast(tf('Açılamadı: %s', (err as Error).message), 'error');
     }
   }
 
@@ -83,7 +83,7 @@ export function Kitaplik({ onAcildi }: { onAcildi: () => void }) {
       });
       onAcildi();
     } catch (err) {
-      showToast(`Açılamadı: ${(err as Error).message}`, 'error');
+      showToast(tf('Açılamadı: %s', (err as Error).message), 'error');
     }
   }
 
@@ -113,7 +113,7 @@ export function Kitaplik({ onAcildi }: { onAcildi: () => void }) {
             punto onu dipnot gibi gösteriyordu. */}
         <blockquote className="mt-10" data-testid="kitaplik-soz">
           <p className="text-[24px] leading-[1.35] text-metin-guclu">{sozMetni(soz, arayuzDili)}</p>
-          <footer className="mzn-etiket mt-5">{soz.kim}</footer>
+          <footer className="mzn-etiket mt-5">{sozKimi(soz, arayuzDili)}</footer>
         </blockquote>
         <div className="flex-1" />
 

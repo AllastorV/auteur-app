@@ -5,6 +5,7 @@ import { BLOK_TIPLERI, blockFingerprint, type ScriptBlockType } from './script';
 import { uid } from '../util/id';
 import { isDedicatedMapTextureAsset, referencedMapTextureAssetIds } from './world-map-textures';
 import { parseMapOverlay } from './world-map';
+import { t } from '../dil/arayuz';
 
 /**
  * `.sbp` proje dosyası — içinde `project.json` ve `assets/` barındıran bir ZIP.
@@ -76,7 +77,7 @@ export async function packProject(bundle: ProjectBundle): Promise<Uint8Array> {
 export async function unpackProject(data: Uint8Array | ArrayBuffer): Promise<ProjectBundle> {
   const zip = await JSZip.loadAsync(data);
   const projectFile = zip.file('project.json');
-  if (!projectFile) throw new Error('Geçersiz .sbp dosyası: project.json bulunamadı.');
+  if (!projectFile) throw new Error(t('Geçersiz .sbp dosyası: project.json bulunamadı.'));
   const raw = JSON.parse(await projectFile.async('string'));
   const project = migrateProject(raw);
 
@@ -103,7 +104,7 @@ export async function unpackProject(data: Uint8Array | ArrayBuffer): Promise<Pro
 
 /** Eski şema sürümlerini güncel modele taşır. */
 export function migrateProject(raw: any): Project {
-  if (!raw || typeof raw !== 'object') throw new Error('Proje verisi okunamadı.');
+  if (!raw || typeof raw !== 'object') throw new Error(t('Proje verisi okunamadı.'));
   const version = Number(raw.schemaVersion ?? 0);
   if (version > PROJECT_SCHEMA_VERSION) {
     throw new Error(
@@ -263,3 +264,14 @@ export function renderFileNameTemplate(
 }
 
 export const DEFAULT_FILENAME_TEMPLATE = 'S{sahne}_C{cekim}.png';
+
+/**
+ * Şablon DEĞİŞKEN ADLARI arayüz dilinde gösterilir. İki takım da her zaman
+ * çalışır (`renderFileNameTemplate` ikisini de tanıyor); değişen yalnız
+ * kullanıcıya önerilen ad — İngilizce arayüzde `{sahne}` görmek anlamsızdı.
+ */
+export function dosyaAdiDegiskenleri(dil: 'en' | 'tr'): { varsayilan: string; adlar: string[] } {
+  return dil === 'tr'
+    ? { varsayilan: DEFAULT_FILENAME_TEMPLATE, adlar: ['sahne', 'cekim', 'panel', 'ad'] }
+    : { varsayilan: 'S{scene}_C{shot}.png', adlar: ['scene', 'shot', 'panel', 'name'] };
+}

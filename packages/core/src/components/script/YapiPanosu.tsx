@@ -4,7 +4,7 @@ import { blogaGit } from '../../store/mod';
 import { useSenaryoProfili } from '../../hooks/useSenaryoProfili';
 import { DOKUMAN_TIPLERI, dokumanTipi } from '../../model/dokuman-tipi';
 import { yapiIstatistigiCikar } from '../../model/yapi';
-import { arayuzDili, t } from '../../dil/arayuz';
+import { arayuzDili, t, tf } from '../../dil/arayuz';
 
 /**
  * Yapı panosu — F7 (§13.1 "Yapı" / "İstatistik" sütunları, AÇIK KALAN kısmı).
@@ -57,7 +57,7 @@ export function YapiPanosu() {
                   type="button"
                   data-testid={`yapi-birim-${b.sira}`}
                   className="flex w-full items-center gap-1 text-left"
-                  title={`${b.blokSayisi} blok · ${b.kelime} kelime`}
+                  title={tf('%d blok · %d kelime', b.blokSayisi, b.kelime)}
                   onClick={() => blogaGit(b.ilkBlokId)}
                 >
                   <span className="mzn-sayi w-5 shrink-0 text-right text-[10px] text-metin-cok-zayif">

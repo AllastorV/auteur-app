@@ -1,6 +1,7 @@
 import type { ScriptBlock } from '../model/script';
 import type { DilAdi } from '../format/profil';
 import { sahneBasligiAyristir, sahneBasligiBicimle } from '../format/terim';
+import { t, tf } from './arayuz';
 
 /**
  * Makine çevirisi — §16.4.
@@ -111,7 +112,7 @@ async function grubuCevir(
   for (let i = 0; i < sonuc.length; i++) {
     const s = sonuc[i];
     if (typeof s !== 'string') {
-      throw new Error(`${saglayici.ad}: metin olmayan yanıt geldi. Çeviri uygulanmadı.`);
+      throw new Error(tf('%s: metin olmayan yanıt geldi. Çeviri uygulanmadı.', saglayici.ad));
     }
     /* Sağlayıcı boş ya da yalnız boşluktan oluşan dizge dönerse uzunluk ve
        tip denetimini geçiyordu ama bloğun metnini SİLİYORDU — kaynak
@@ -119,7 +120,7 @@ async function grubuCevir(
        sağlayıcıya göndermiyor). Bu, o blok ÇEVRİLMEMİŞ sayılır: mevcut
        "eksik/biçimsiz yanıt" hata yoluna düşer, belge kirlenmez. */
     if (s.trim() === '' && grup[i].trim() !== '') {
-      throw new Error(`${saglayici.ad}: boş çeviri yanıtı geldi. Çeviri uygulanmadı.`);
+      throw new Error(tf('%s: boş çeviri yanıtı geldi. Çeviri uygulanmadı.', saglayici.ad));
     }
   }
   return sonuc;
@@ -177,7 +178,7 @@ export async function senaryoyuCevir(
   const cevrilenler: string[] = [];
   for (const grup of gruplar) {
     if (secenekler.iptal?.cancelled) {
-      throw new Error('Çeviri iptal edildi. Belgeye dokunulmadı.');
+      throw new Error(t('Çeviri iptal edildi. Belgeye dokunulmadı.'));
     }
     cevrilenler.push(...(await grubuCevir(saglayici, grup, secenekler)));
     secenekler.onIlerleme?.(cevrilenler.length, metinler.length);

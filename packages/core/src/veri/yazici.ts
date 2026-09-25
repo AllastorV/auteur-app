@@ -1,6 +1,7 @@
 import * as Y from 'yjs';
 import { cerceve } from './gunluk';
 import { birlestir, type YazarlikKaydi } from './yazarlik';
+import { t, tf } from '../dil/arayuz';
 
 /**
  * Günlük yazıcısı — §15.2'nin 1. ve 2. katmanını süren zamanlayıcı.
@@ -87,7 +88,7 @@ export const KABUK_ZAMAN_ASIMI_MS = 10_000;
 function zamanAsimiyla<T>(p: Promise<T>, ms: number, ad: string): Promise<T> {
   return new Promise<T>((coz, hata) => {
     const sayac = setTimeout(
-      () => hata(new Error(`${ad} ${Math.round(ms / 1000)} sn içinde yanıt vermedi`)),
+      () => hata(new Error(tf('%s %d sn içinde yanıt vermedi', t(ad), Math.round(ms / 1000)))),
       ms,
     );
     p.then(

@@ -1,4 +1,5 @@
 import type { CeviriSaglayici } from './ceviri';
+import { t } from './arayuz';
 
 /**
  * DeepL ve Google Translate sağlayıcıları — §16.4.
@@ -90,18 +91,18 @@ export function deeplSaglayici(ayar: SaglayiciAyari): CeviriSaglayici {
 
       const govde = (await yanit.json()) as { translations?: { text?: string }[] };
       if (!Array.isArray(govde.translations)) {
-        throw new Error('DeepL: beklenmeyen yanıt biçimi. Çeviri uygulanmadı.');
+        throw new Error(t('DeepL: beklenmeyen yanıt biçimi. Çeviri uygulanmadı.'));
       }
       /* Eksik alan BOŞ DİZGEYE düşürülemez: boş dizge geçerli bir `string`'dir,
          `ceviri.ts`'in "hepsi ya da hiçbiri" savunması yalnız uzunluk ve tip
          denetliyor, dolayısıyla o boşluk savunmadan geçip bloğun metnini
          BELGEYE BOŞ yazardı — modülün en gururlu invaryantı sağlayıcı
          katmanından delinirdi. */
-      return govde.translations.map((t) => {
-        if (typeof t?.text !== 'string') {
-          throw new Error('DeepL: beklenmeyen yanıt biçimi (eksik metin). Çeviri uygulanmadı.');
+      return govde.translations.map((oge) => {
+        if (typeof oge?.text !== 'string') {
+          throw new Error(t('DeepL: beklenmeyen yanıt biçimi (eksik metin). Çeviri uygulanmadı.'));
         }
-        return t.text;
+        return oge.text;
       });
     },
   };
@@ -191,7 +192,7 @@ export function googleSaglayici(ayar: SaglayiciAyari): CeviriSaglayici {
       };
       const ceviriler = govde.data?.translations;
       if (!Array.isArray(ceviriler)) {
-        throw new Error('Google Translate: beklenmeyen yanıt biçimi. Çeviri uygulanmadı.');
+        throw new Error(t('Google Translate: beklenmeyen yanıt biçimi. Çeviri uygulanmadı.'));
       }
       // Eksik alan boşa düşürülmez — gerekçe DeepL tarafındaki yorumda.
       return ceviriler.map((t) => {

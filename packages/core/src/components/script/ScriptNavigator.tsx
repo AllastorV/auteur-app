@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { useProjectStore } from '../../store/project';
 import { useUiStore, type ScriptFilter } from '../../store/ui';
 import {
@@ -201,7 +201,7 @@ export function ScriptNavigator() {
           if (e.shiftKey) {
             // Shift+Enter: yeni panel açmadan aktif panele bağla.
             linkBlocksToPanel(ids);
-            showToast(`${ids.length} satır bu panele bağlandı.`, 'success');
+            showToast(tf('%d satır bu panele bağlandı.', ids.length), 'success');
             return;
           }
           const created = createPanelFromBlocks(ids);
@@ -239,17 +239,17 @@ export function ScriptNavigator() {
       if (!editable) return showToast(t('Bu oturumda düzenleme izniniz yok.'), 'error');
       try {
         const sonuc = await importScriptFile(file);
-        showToast(`Senaryo yüklendi — ${sonuc.satir} satır.`, 'success');
+        showToast(tf('Senaryo yüklendi — %d satır.', sonuc.satir), 'success');
         /* Kayıpsız olmayan dönüşüm SESSİZ kalamaz: kullanıcı neyin
            taşınmadığını ya da hangi tipe kaydığını bilmeli. */
         if (sonuc.uyarilar.length > 0) {
           const ozet = sonuc.uyarilar
             .map((u) => `${u.starcTipi}×${u.sayi} ${u.sonuc === 'gevsek' ? t('yaklaşık') : t('atlandı')}`)
             .join(', ');
-          showToast(`İçe aktarım tam eşleşmedi: ${ozet}`, 'info');
+          showToast(tf('İçe aktarım tam eşleşmedi: %s', ozet), 'info');
         }
       } catch (err) {
-        showToast(`Senaryo okunamadı: ${(err as Error).message}`, 'error');
+        showToast(tf('Senaryo okunamadı: %s', (err as Error).message), 'error');
       }
     },
     [editable, showToast],
@@ -346,7 +346,7 @@ export function ScriptNavigator() {
                 </button>
               ))}
               <span className="mzn-sayi ml-auto self-center text-[11px] text-metin-cok-zayif">
-                {linkIndex.size}/{blocks.length} bağlı
+                {tf('%d/%d bağlı', linkIndex.size, blocks.length)}
               </span>
             </div>
 
@@ -402,7 +402,7 @@ export function ScriptNavigator() {
                             <button
                               key={panelId}
                               type="button"
-                              title={`${panelLabel(panel)} — aç (sağ tık: bağlantıyı kaldır)`}
+                              title={tf('%s — aç (sağ tık: bağlantıyı kaldır)', panelLabel(panel))}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 /* Panel rozetine tıklamak da mod kabuğundan

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { Modal, Button } from './Modal';
 import { usePlatform } from '../../platform/context';
 import { useProjectStore } from '../../store/project';
@@ -122,7 +122,7 @@ export function KarsilastirDialog({ onClose }: { onClose: () => void }) {
       name: useProjectStore.getState().project.script?.name ?? '',
       blocks: sonuc,
     });
-    showToast(`${secim.size} satır geri getirildi.`, 'success');
+    showToast(tf('%d satır geri getirildi.', secim.size), 'success');
     setSecim(new Set());
   }, [eskiBloklar, mevcut, secim, showToast]);
 
@@ -139,7 +139,7 @@ export function KarsilastirDialog({ onClose }: { onClose: () => void }) {
             disabled={!secim.size}
             onClick={geriGetir}
           >
-            Seçileni geri getir{secim.size ? ` (${secim.size})` : ''}
+            {t('Seçileni geri getir')}{secim.size ? ` (${secim.size})` : ''}
           </Button>
         </>
       }
@@ -185,8 +185,8 @@ export function KarsilastirDialog({ onClose }: { onClose: () => void }) {
       {eskiBloklar && ozet.fark && (
         <>
           <p data-testid="fark-ozeti" className="mb-2 text-[11px] text-metin-zayif">
-            {ozet.eklenen} eklendi · {ozet.silinen} silindi · {ozet.degisen} değişti
-            {ozet.tasinan > 0 && ` · ${ozet.tasinan} taşındı`}
+            {tf('%d eklendi · %d silindi · %d değişti', ozet.eklenen, ozet.silinen, ozet.degisen)}
+            {ozet.tasinan > 0 && ` · ${tf('%d taşındı', ozet.tasinan)}`}
           </p>
           <div className="max-h-80 overflow-y-auto">
             {sahneler.filter((s) => s.degisti).map((sahne, i) => (

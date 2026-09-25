@@ -12,6 +12,7 @@ import {
 } from '../model/script';
 import { starcOku, type StarcUyarisi } from '../ice/starc';
 import { bloktanPaneleGec } from './mod';
+import { t, tf } from '../dil/arayuz';
 
 /**
  * Senaryo ↔ panel bağlama eylemleri.
@@ -59,7 +60,7 @@ export async function importScriptFile(file: File): Promise<IceAktarimSonucu> {
   if (/\.starc$/i.test(file.name)) {
     const senaryolar = await starcOku(new Uint8Array(await file.arrayBuffer()));
     if (senaryolar.length === 0) {
-      throw new Error('STARC projesinde senaryo metni yok.');
+      throw new Error(t('STARC projesinde senaryo metni yok.'));
     }
     /* Bir `.starc` birden çok senaryo taşıyabilir; belgemiz bir tane tutuyor.
        İlkini alıp GERİ KALANI SÖYLEMEK, sessizce ilkini alıp ötekileri yok
@@ -77,7 +78,7 @@ export async function importScriptFile(file: File): Promise<IceAktarimSonucu> {
     script = parseScript(file.name, await file.text());
   }
 
-  if (!script.blocks.length) throw new Error('Senaryoda okunabilir satır bulunamadı.');
+  if (!script.blocks.length) throw new Error(t('Senaryoda okunabilir satır bulunamadı.'));
   M.setScript(useProjectStore.getState().doc, script);
   /* Yükledikten sonra senaryo görünümüne geçilir: eski sol sekme yerine
      artık okunacak yer düzenlenebilir sayfadır, gezgin de onunla gelir. */
@@ -182,7 +183,7 @@ export function scriptDropHandlers(panelId: string, editable: boolean) {
       e.preventDefault();
       e.stopPropagation();
       linkBlocksToPanel(payload.blockIds, panelId);
-      useUiStore.getState().showToast(`${payload.blockIds.length} satır bağlandı.`, 'success');
+      useUiStore.getState().showToast(tf('%d satır bağlandı.', payload.blockIds.length), 'success');
     },
   };
 }

@@ -8,6 +8,7 @@ import {
   type ZincirKaydi,
 } from '../veri/zincir';
 import type { KanitKabugu } from '../platform/types';
+import { arayuzDili } from '../dil/arayuz';
 
 /**
  * KANIT PAKETİ — Auteur olmadan doğrulanabilen tek dosya.
@@ -54,9 +55,48 @@ export interface KanitPaketi {
 
 const adI = (zaman: number) => String(Math.trunc(zaman));
 
+/** Paketin açıklama dosyasının adı — arayüz dilinde (İngilizce arayüzde `README.txt`). */
+export function okubeniAdi(): string {
+  return arayuzDili() === 'tr' ? 'OKUBENI.txt' : 'README.txt';
+}
+
 function okubeniYaz(projeAdi: string, kayitlar: readonly ZincirKaydi[]): string {
   const muhur = kayitlar.filter((k) => k.tur === 'muhur').length;
   const damga = kayitlar.filter((k) => k.tur === 'damga').length;
+  /* Paket yazarın ARAYÜZ dilinde açıklanır: İngilizce arayüzle mühür alan
+     birinin teslim ettiği pakette Türkçe bir OKUBENI vardı (denetim
+     2026-09-25). Komutlar ve dosya adları iki dilde de aynı. */
+  if (arayuzDili() !== 'tr') return [
+    `AUTEUR EVIDENCE PACKAGE — ${projeAdi}`,
+    '',
+    `Records: ${kayitlar.length} (${muhur} seals, ${damga} timestamps)`,
+    '',
+    'HOW TO VERIFY',
+    '  node dogrula.mjs',
+    '',
+    'Node 18 or later is enough. The script installs no packages and makes no network calls.',
+    '',
+    'WHAT IT PROVES',
+    '  · The zincir.log frames are intact (CRC-32).',
+    '  · Every record is linked to the previous one by a SHA-256 chain: removing a record,',
+    '    reordering records or editing any field (time, author, label, digest) BREAKS the chain.',
+    '  · The texts under muhurler/ match the digests in the records — they are exactly',
+    '    the text as it was when it was sealed.',
+    '',
+    'WHAT IT DOES NOT PROVE',
+    '  · THE DATE. Times in zincir.log come from the clock of the machine that took the seal.',
+    '    Only an independent timestamp proves the date.',
+    '  · That a timestamp is VALID. damgalar/*.tsr are RFC 3161 tokens and this script does',
+    '    NOT open them. To verify:',
+    '      openssl ts -verify -data muhurler/<time>.txt \\',
+    '        -in damgalar/<time>.tsr -CAfile <tsa-ca.pem>',
+    '',
+    'FILES',
+    '  zincir.log   the raw binary record — the evidence itself.',
+    '  zincir.json  a readable dump of the same data. It is DERIVED; if they disagree,',
+    '               zincir.log wins.',
+    '',
+  ].join('\n');
   return [
     `AUTEUR KANIT PAKETİ — ${projeAdi}`,
     '',
@@ -127,11 +167,11 @@ export async function kanitPaketiKur(s: KanitPaketSecenekleri): Promise<KanitPak
   const dosyalar: string[] = [];
 
   const okubeni = okubeniYaz(s.projeAdi, s.kayitlar);
-  zip.file('OKUBENI.txt', okubeni);
+  zip.file(okubeniAdi(), okubeni);
   zip.file('zincir.log', zinciriKodla(s.kayitlar));
   zip.file('zincir.json', await jsonDokum(s.kayitlar));
   zip.file('dogrula.mjs', dogrulayiciKaynak);
-  dosyalar.push('OKUBENI.txt', 'zincir.log', 'zincir.json', 'dogrula.mjs');
+  dosyalar.push(okubeniAdi(), 'zincir.log', 'zincir.json', 'dogrula.mjs');
 
   for (const k of s.kayitlar) {
     const ad = adI(k.zaman);

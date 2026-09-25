@@ -1,6 +1,7 @@
 import type * as Y from 'yjs';
 import { panelsArray, readScript } from '../doc/schema';
 import { metinSayaclari } from '../format/ekran';
+import { t, tf } from '../dil/arayuz';
 
 /**
  * Kurtarılacak değişikliğin ÖZETİ — §15.3 "Farkı gör".
@@ -56,12 +57,12 @@ export function kurtarmaOzeti(onceki: Y.Doc, sonraki: Y.Doc): KurtarmaOzeti {
  * "demek ki bir şey yok" der ve yazdığını atar. Bir saniyelik iş de iştir.
  */
 export function sureMetni(ms: number, uygulanan: number): string {
-  if (uygulanan === 0) return 'kaydedilmemiş iş yok';
+  if (uygulanan === 0) return t('kaydedilmemiş iş yok');
   const dakika = Math.floor(ms / 60_000);
   if (dakika >= 60) {
     const saat = Math.floor(dakika / 60);
-    return `${saat} saat ${dakika % 60} dakikalık iş`;
+    return tf('%d saat %d dakikalık iş', saat, dakika % 60);
   }
-  if (dakika >= 1) return `${dakika} dakikalık iş`;
-  return 'bir dakikadan kısa iş';
+  if (dakika >= 1) return tf('%d dakikalık iş', dakika);
+  return t('bir dakikadan kısa iş');
 }

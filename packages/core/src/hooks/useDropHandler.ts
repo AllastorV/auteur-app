@@ -14,6 +14,7 @@ import {
 } from '../model/objects';
 import { uid } from '../util/id';
 import { svgPathToPolylines } from '../render/svgPath';
+import { tf } from '../dil/arayuz';
 
 const IMAGE_TYPES = /^image\/(png|jpeg|jpg|gif|webp|svg\+xml)$/;
 
@@ -53,7 +54,7 @@ function readAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(new Error(`${file.name} okunamadı.`));
+    reader.onerror = () => reject(new Error(tf('%s okunamadı.', file.name)));
     reader.readAsDataURL(file);
   });
 }

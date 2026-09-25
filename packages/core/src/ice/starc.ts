@@ -1,5 +1,6 @@
 import type { ScriptBlock, ScriptBlockType } from '../model/script';
 import { uid } from '../util/id';
+import { t, tf } from '../dil/arayuz';
 
 /**
  * `.starc` içe aktarımı — STARC kullanıcısının ÇIKIŞ KAPISI (spec §7).
@@ -173,7 +174,7 @@ export function metneCevir(deger: unknown): string {
 export function starcXmlToBloklar(xml: string): Omit<StarcSenaryo, 'ad'> {
   const belge = new DOMParser().parseFromString(xml, 'text/xml');
   if (belge.getElementsByTagName('parsererror').length > 0) {
-    throw new Error('STARC belgesi çözümlenemedi: XML bozuk.');
+    throw new Error(t('STARC belgesi çözümlenemedi: XML bozuk.'));
   }
 
   const bloklar: ScriptBlock[] = [];
@@ -254,7 +255,7 @@ export async function starcOku(bytes: Uint8Array): Promise<StarcSenaryo[]> {
       "SELECT name FROM sqlite_master WHERE type='table' AND name='documents'",
     );
     if (tablolar.length === 0) {
-      throw new Error('Bu bir STARC projesi değil: documents tablosu yok.');
+      throw new Error(t('Bu bir STARC projesi değil: documents tablosu yok.'));
     }
 
     const sonuc = calistir(
@@ -285,7 +286,7 @@ function calistir(db: import('sql.js').Database, sql: string) {
   } catch (hata) {
     const mesaj = (hata as Error).message;
     if (/not a database|file is encrypted|malformed/i.test(mesaj)) {
-      throw new Error(`Dosya SQLite değil ya da bozuk: ${mesaj}`);
+      throw new Error(tf('Dosya SQLite değil ya da bozuk: %s', mesaj));
     }
     throw hata;
   }

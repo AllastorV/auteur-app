@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 /* Yerel `t` TERİM TABLOSU (dile göre döküm başlıkları) — çeviri işlevi
    takma adla alınıyor ki ikisi çakışmasın. */
-import { t as ceviri } from '../../dil/arayuz';
+import { t as ceviri, tf } from '../../dil/arayuz';
 import { useProjectStore } from '../../store/project';
 import { useUiStore } from '../../store/ui';
 import { usePlatform } from '../../platform/context';
@@ -46,11 +46,11 @@ export function BreakdownSekmesi() {
         bytes, dosyaAdi: ad, turAdi: bicim === 'csv' ? 'CSV' : 'Markdown', uzantilar: [bicim],
       });
       if (res.cancelled) showToast(ceviri('Dışa aktarma iptal edildi.'), 'info');
-      else if (res.path) showToast(`Kaydedildi: ${res.path}`, 'success');
+      else if (res.path) showToast(tf('Kaydedildi: %s', res.path), 'success');
       return;
     }
     downloadBlob(new Blob([bytes as BlobPart], { type: 'text/plain' }), ad);
-    showToast(`${ad} indirildi.`, 'success');
+    showToast(tf('%s indirildi.', ad), 'success');
   };
 
   return (

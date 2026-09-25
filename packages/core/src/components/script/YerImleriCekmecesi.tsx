@@ -1,5 +1,5 @@
 import React from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { useProjectStore } from '../../store/project';
 import { useUiStore } from '../../store/ui';
 import { blogaGit } from '../../store/mod';
@@ -63,7 +63,7 @@ export function YerImleriCekmecesi() {
                 <span className="block truncate text-[12px] text-metin-guclu">
                   {i.etiket || metin.get(i.blockId) || t('(boş satır)')}
                 </span>
-                <span className="mzn-sayi block text-[10px] text-metin-cok-zayif">satır {i.sira + 1}</span>
+                <span className="mzn-sayi block text-[10px] text-metin-cok-zayif">{tf('satır %d', i.sira + 1)}</span>
               </button>
               <button
                 type="button"

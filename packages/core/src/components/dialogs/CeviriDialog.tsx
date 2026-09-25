@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { Modal, Button } from './Modal';
 import { usePlatform } from '../../platform/context';
 import { useProjectStore } from '../../store/project';
@@ -102,7 +102,7 @@ export function CeviriDialog({ onClose }: { onClose: () => void }) {
          kaydedip her açılışta geri getirmek, kullanıcıyı aynı hataya
          tekrar tekrar sokardı. */
       void platform.dil?.anahtarYaz(saglayici, anahtar.trim()).catch(() => {});
-      showToast(`${sonuc.length} satır çevrildi.`, 'success');
+      showToast(tf('%d satır çevrildi.', sonuc.length), 'success');
       onClose();
     } catch (err) {
       setHata(err instanceof Error ? err.message : String(err));

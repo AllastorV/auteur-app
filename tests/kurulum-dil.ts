@@ -8,5 +8,9 @@
  * (arayuz-dili.test.ts) ölçülür.
  */
 import { arayuzDiliniAyarla } from '../packages/core/src/dil/arayuz';
+import { anaDiliniAyarla } from '../apps/desktop/electron/metin';
 
 arayuzDiliniAyarla('tr');
+/* Ana süreç (Electron) metinleri de aynı sözleşmeyle: Türkçe koşar,
+   İngilizcesi `apps/desktop/electron/metin.test.ts`te ölçülür. */
+anaDiliniAyarla('tr');

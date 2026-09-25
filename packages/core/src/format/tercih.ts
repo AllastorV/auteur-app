@@ -12,6 +12,7 @@ import {
   VARSAYILAN_KELIME_HIZI, bolunmeyiKur,
 } from './iki-sutun';
 import { BLOK_TIPLERI, type ScriptBlockType } from '../model/script';
+import { arayuzDili } from '../dil/arayuz';
 
 /**
  * KULLANICI FORMAT PROFİLİ — kağıt, dil ve yazım presetleri (§16.3).
@@ -92,7 +93,13 @@ export interface FormatTercihi {
 
 export const VARSAYILAN_TERCIH: FormatTercihi = {
   kagit: 'letter',
-  dil: 'tr',
+  /* KAYITLI TERCİH YOKSA belge dili ARAYÜZ dilini izler. Sabit `'tr'` idi:
+     İngilizce arayüzle açılan yeni bir kullanıcının ilk senaryosu Türkçe
+     terimlerle ve Türkçe büyük harfle (`İNT. STATİON — NİGHT`) başlıyordu —
+     tanıtım videosunda bile görünüyordu. Getter, çünkü arayüz dili
+     çalışma zamanında değişebilir; açıkça seçilmiş bir dil (`o.dil`)
+     her zaman önceliklidir. */
+  get dil(): DilAdi { return arayuzDili(); },
   presetler: {},
   /* Varsayılan Tinos: roman ve düz metnin el yazması standardı Times'tır ve
      Tinos onunla metrik uyumlu. Courier varsayılan olsaydı yeni bir roman
