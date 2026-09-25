@@ -1,3 +1,4 @@
+import { tf } from '../dil/arayuz';
 /**
  * RFC 3161 ZAMAN DAMGASI — üçüncü tarafın tanıklığı.
  *
@@ -190,7 +191,7 @@ export async function zamanDamgasiAl(
   if (!KABUL.has(durum)) {
     /* REDDEDİLEN YANIT SAKLANMIYOR: "damga alındı" diye kaydetmek, kullanıcıya
        olmayan bir tanıklığı varmış gibi göstermek olurdu. */
-    throw new Error(`TSA damgayi vermedi (PKIStatus ${durum})`);
+    throw new Error(tf('TSA damgayı vermedi (PKIStatus %s)', durum));
   }
   return { jeton, durum, url };
 }

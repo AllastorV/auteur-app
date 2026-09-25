@@ -1,5 +1,6 @@
 import type { Panel, Project, TransitionKind } from '../model/types';
 import { buildTimeline } from '../model/timeline';
+import { t } from '../dil/arayuz';
 
 export interface AnimaticSegment {
   /** PNG dataURL */
@@ -38,7 +39,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error('Kare yüklenemedi.'));
+    img.onerror = () => reject(new Error(t('Kare yüklenemedi.')));
     img.src = src;
   });
 }
@@ -164,7 +165,7 @@ export async function buildAnimatic(
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('2D bağlam oluşturulamadı.');
+  if (!ctx) throw new Error(t('2D bağlam oluşturulamadı.'));
 
   /**
    * Panel görüntüleri kayan pencerede tutulur.

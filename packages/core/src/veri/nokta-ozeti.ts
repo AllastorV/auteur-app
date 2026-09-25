@@ -2,6 +2,7 @@ import type { ScriptBlock } from '../model/script';
 import type { FormatProfili } from '../format/profil';
 import { sayfala } from '../format/sayfala';
 import { bloklariKarsilastir, sahnelereBol } from '../model/karsilastir';
+import { t, tf } from '../dil/arayuz';
 
 /**
  * Bir geri dönüş noktası ile mevcut belge arasındaki fark — İNSAN diliyle.
@@ -36,8 +37,8 @@ export function noktaOzetiCikar(
 
   const metin =
     degisenSahneSayisi === 0 && sayfaFarki === 0
-      ? 'Şu anki hâlinle aynı.'
-      : `${degisenSahneSayisi} sahne, ~${sayfaFarki} sayfa fark`;
+      ? t('Şu anki hâlinle aynı.')
+      : tf('%d sahne, ~%s sayfa fark', degisenSahneSayisi, sayfaFarki);
 
   return { sayfaSayisi, sayfaFarki, degisenSahneSayisi, metin };
 }

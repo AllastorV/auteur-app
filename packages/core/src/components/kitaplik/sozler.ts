@@ -24,6 +24,8 @@ export interface Soz {
   /** İngilizce karşılık — arayüz dili İngilizceyken kullanılır. */
   en: string;
   kim: string;
+  /** Adın İngilizce yazımı Türkçeden ayrışıyorsa (Çehov → Chekhov). */
+  kimEn?: string;
 }
 
 export const SOZLER: readonly Soz[] = [
@@ -34,11 +36,11 @@ export const SOZLER: readonly Soz[] = [
   { metin: 'Filmi üç kez yaparsınız: yazarken, çekerken, keserken.', en: 'You make a film three times: when you write it, when you shoot it, when you cut it.', kim: 'David Lean' },
   { metin: 'Sanat asla bitmez, yalnızca terk edilir.', en: 'Art is never finished, only abandoned.', kim: 'Leonardo da Vinci' },
   { metin: 'Geç gir, erken çık.', en: 'Come in late, leave early.', kim: 'William Goldman' },
-  { metin: 'Zaman heykeltıraşlığı — sinemacının işi budur.', en: 'Sculpting in time — that is the filmmaker’s work.', kim: 'Andrey Tarkovski' },
-  { metin: 'Karakter kaderdir; olay örgüsü yalnızca onun bıraktığı izdir.', en: 'Character is destiny; plot is only the trace it leaves.', kim: 'Herakleitos' },
+  { metin: 'Zaman heykeltıraşlığı — sinemacının işi budur.', en: 'Sculpting in time — that is the filmmaker’s work.', kim: 'Andrey Tarkovski', kimEn: 'Andrei Tarkovsky' },
+  { metin: 'Karakter kaderdir; olay örgüsü yalnızca onun bıraktığı izdir.', en: 'Character is destiny; plot is only the trace it leaves.', kim: 'Herakleitos', kimEn: 'Heraclitus' },
   { metin: 'İlk taslak yalnızca kumun kovaya doldurulmasıdır.', en: 'The first draft is just you shovelling sand into a box.', kim: 'Shannon Hale' },
   { metin: 'Yazdığınız her sayfa bir dakikadır. Seyircinin bir dakikası.', en: 'Every page you write is one minute — one minute of the audience’s life.', kim: 'Syd Field' },
-  { metin: 'Gösterme fırsatın varken anlatma.', en: 'Don’t tell me the moon is shining; show me the glint of light on broken glass.', kim: 'Anton Çehov' },
+  { metin: 'Gösterme fırsatın varken anlatma.', en: 'Don’t tell me the moon is shining; show me the glint of light on broken glass.', kim: 'Anton Çehov', kimEn: 'Anton Chekhov' },
 ];
 
 /**
@@ -50,6 +52,10 @@ export function gununSozu(gun: number = Math.floor(Date.now() / 86_400_000)): So
 }
 
 /** Sözün ARAYÜZ DİLİNDEKİ metni. */
+export function sozKimi(soz: Soz, dil: string): string {
+  return dil === 'tr' ? soz.kim : soz.kimEn ?? soz.kim;
+}
+
 export function sozMetni(soz: Soz, dil: string): string {
   return dil === 'tr' ? soz.metin : soz.en;
 }

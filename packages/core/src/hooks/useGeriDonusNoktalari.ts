@@ -8,6 +8,7 @@ import { readScript } from '../doc/schema';
 import { kontrolNoktasinaDon, type GeriDonusKabugu } from '../veri/geri-donus';
 import { noktaOzetiCikar, type NoktaOzeti } from '../veri/nokta-ozeti';
 import type { CipaKaydi } from '../platform/types';
+import { t, tf } from '../dil/arayuz';
 
 /**
  * §15.2.2'nin arayüz mantığı — GÖRSELDEN AYRI.
@@ -78,7 +79,7 @@ export function useGeriDonusNoktalari(): GeriDonusDurumu {
          DAYANDIĞI bir sözleşme — kabuk tarafı sessizce değişirse liste
          yanlış sırada kalmamalı. */
       .then((halka) => setNoktalar([...halka].sort((a, b) => b.zaman - a.zaman)))
-      .catch(() => setHata('Geri dönülecek anlar okunamadı.'))
+      .catch(() => setHata(t('Geri dönülecek anlar okunamadı.')))
       .finally(() => setYukleniyor(false));
   }, [kabukYuzeyi, projeId]);
 
@@ -135,9 +136,9 @@ export function useGeriDonusNoktalari(): GeriDonusDurumu {
         /* yoksay — aşağıdaki mesaj eksiksiz dönüşünkiyle aynı kalır */
       }
       if (eksik.length) {
-        showToast(`Bu ana dönüldü — ${eksik.length} görselin dosyası bulunamadı.`, 'error');
+        showToast(tf('Bu ana dönüldü — %d görselin dosyası bulunamadı.', eksik.length), 'error');
       } else {
-        showToast('Bu ana dönüldü.', 'success');
+        showToast(t('Bu ana dönüldü.'), 'success');
       }
       setSecilenId(null);
       setOzet(null);
@@ -165,8 +166,8 @@ export function useGeriDonusNoktalari(): GeriDonusDurumu {
       }
       showToast(
         kayip
-          ? 'Bu an artık yok — liste yenilendi. Şu anki hâlin değişmedi.'
-          : 'Bu ana dönülemedi. Şu anki hâlin değişmedi, güvenle devam edebilirsin.',
+          ? t('Bu an artık yok — liste yenilendi. Şu anki hâlin değişmedi.')
+          : t('Bu ana dönülemedi. Şu anki hâlin değişmedi, güvenle devam edebilirsin.'),
         'error',
       );
       yenile();

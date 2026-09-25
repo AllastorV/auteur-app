@@ -4,6 +4,7 @@ import { useUiStore } from '../../store/ui';
 import { PanelThumbnail } from '../grid/PanelThumbnail';
 import { panelSize } from '../../data/aspect';
 import { blogaGit } from '../../store/mod';
+import { t } from '../../dil/arayuz';
 
 /** Tasarımdaki küçük resim ölçüsü (DESIGN.md · Yerleşim). */
 const KUCUK_EN = 148;
@@ -49,7 +50,7 @@ export function PlanSeridi() {
             type="button"
             data-testid={`plan-${p.id}`}
             aria-current={secili || undefined}
-            title={`S${p.meta.scene}·C${p.meta.shot}${hedef ? '' : ' — senaryoya bağlı değil'}`}
+            title={`S${p.meta.scene}·C${p.meta.shot}${hedef ? '' : ` — ${t('senaryoya bağlı değil')}`}`}
             onClick={() => {
               setActivePanel(p.id);
               if (hedef) blogaGit(hedef);

@@ -409,7 +409,7 @@ function EkleDugmeleri({ onEkle }: { onEkle: (t: CiftGirdi['tip']) => void }) {
           onClick={() => onEkle(b)}
           className="mzn-denetim px-2.5 py-1 text-[11px]"
         >
-          {BLOK_ETIKETLERI[b]}
+          {t(BLOK_ETIKETLERI[b])}
         </button>
       ))}
     </>

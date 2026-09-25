@@ -7,6 +7,7 @@ import { useProjectStore } from '../store/project';
 import type { Participant, Role, Vec2 } from '../model/types';
 import { colorForUser } from '../util/color';
 import { sessionApi } from './api';
+import { t } from '../dil/arayuz';
 
 export interface ConnectOptions {
   serverUrl: string;
@@ -120,7 +121,7 @@ export function connectSession(opts: ConnectOptions): CollabConnection {
   });
 
   provider.on('connection-error', () => {
-    useCollabStore.getState().setStatus('error', 'Sunucuya bağlanılamadı.');
+    useCollabStore.getState().setStatus('error', t('Sunucuya bağlanılamadı.'));
   });
 
   const syncParticipants = () => {

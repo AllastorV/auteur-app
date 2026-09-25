@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { useProjectStore, projectActions } from '../../store/project';
 import { useUiStore } from '../../store/ui';
 import { linkBlocksToPanel } from '../../store/script';
@@ -206,7 +206,7 @@ export function Timeline({ editable }: { editable: boolean }) {
                       e.preventDefault();
                       e.stopPropagation();
                       linkBlocksToPanel(payload.blockIds, panel.id);
-                      useUiStore.getState().showToast(`${payload.blockIds.length} satır bağlandı.`, 'success');
+                      useUiStore.getState().showToast(tf('%d satır bağlandı.', payload.blockIds.length), 'success');
                       return;
                     }
                     if (!dragPanelId) return;
@@ -224,7 +224,7 @@ export function Timeline({ editable }: { editable: boolean }) {
                       : 'border-kenar-denetim bg-denetim/70 hover:border-metin-cok-zayif')
                   }
                   style={{ width: shotWidth, transform: shifted ? 'translateX(12px)' : undefined }}
-                  title={`${panel.meta.scene}/${panel.meta.shot} — ${seg.hold}sn`}
+                  title={`${panel.meta.scene}/${panel.meta.shot} — ${seg.hold}${t('sn')}`}
                 >
                   <span className="flex items-center gap-1 truncate text-[10px] font-semibold text-metin-guclu">
                     {editable && (
@@ -252,7 +252,7 @@ export function Timeline({ editable }: { editable: boolean }) {
                       <span
                         data-timeline-no-scrub
                         className="text-amber"
-                        title={`${panel.scriptRefs.length} senaryo satırına bağlı`}
+                        title={tf('%d senaryo satırına bağlı', panel.scriptRefs.length)}
                       >
                         <Ikon ad="baglanti" boyut={11} />
                       </span>

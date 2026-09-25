@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import type { DiskSegment } from './video';
+import { at } from './metin';
 
 /**
  * Dışa aktarma karelerinin ana süreçteki geçici deposu.
@@ -27,22 +28,22 @@ const jobs = new Map<string, Job>();
 /** İş kimliği ana sürecin dosya adı ürettiği yerdir — yol parçası içeremez. */
 function assertSafeJobId(jobId: unknown): string {
   if (typeof jobId !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(jobId)) {
-    throw new Error('Geçersiz iş kimliği.');
+    throw new Error(at('Geçersiz iş kimliği.'));
   }
   return jobId;
 }
 
 function decodePngDataUrl(dataUrl: unknown): Buffer {
   if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/png;base64,')) {
-    throw new Error('Geçersiz kare verisi.');
+    throw new Error(at('Geçersiz kare verisi.'));
   }
   const base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
   // Sınır çözmeden önce dize uzunluğundan kestirilir: aşırı büyük bir kare
   // için önce 64 MB'lık tampon ayırmak, reddedeceğimiz veriyi belleğe almak olur.
-  if ((base64.length * 3) / 4 > MAX_FRAME_BYTES) throw new Error('Kare verisi çok büyük.');
+  if ((base64.length * 3) / 4 > MAX_FRAME_BYTES) throw new Error(at('Kare verisi çok büyük.'));
   const buffer = Buffer.from(base64, 'base64');
-  if (!buffer.length) throw new Error('Boş kare verisi.');
-  if (buffer.length > MAX_FRAME_BYTES) throw new Error('Kare verisi çok büyük.');
+  if (!buffer.length) throw new Error(at('Boş kare verisi.'));
+  if (buffer.length > MAX_FRAME_BYTES) throw new Error(at('Kare verisi çok büyük.'));
   return buffer;
 }
 
@@ -61,9 +62,9 @@ export function pushFrame(payload: {
   const index = Number(payload.index);
   const duration = Number(payload.duration);
   if (!Number.isInteger(index) || index < 0 || index >= MAX_FRAMES_PER_JOB) {
-    throw new Error('Geçersiz kare sırası.');
+    throw new Error(at('Geçersiz kare sırası.'));
   }
-  if (!Number.isFinite(duration) || duration < 0) throw new Error('Geçersiz kare süresi.');
+  if (!Number.isFinite(duration) || duration < 0) throw new Error(at('Geçersiz kare süresi.'));
 
   const data = decodePngDataUrl(payload.dataUrl);
 
@@ -74,7 +75,7 @@ export function pushFrame(payload: {
   }
   if (job.bytes + data.length > MAX_BYTES_PER_JOB) {
     discardFrames(jobId);
-    throw new Error('Dışa aktarma için ayrılan disk sınırı aşıldı.');
+    throw new Error(at('Dışa aktarma için ayrılan disk sınırı aşıldı.'));
   }
 
   const file = path.join(job.dir, `u${String(index).padStart(6, '0')}.png`);
@@ -89,7 +90,7 @@ export function takeFrames(jobId: string): DiskSegment[] | null {
   const job = jobs.get(assertSafeJobId(jobId));
   if (!job) return null;
   const missing = job.segments.findIndex((s) => !s);
-  if (missing >= 0) throw new Error(`Kare ${missing} eksik — dışa aktarma tamamlanamadı.`);
+  if (missing >= 0) throw new Error(at('Kare %s eksik — dışa aktarma tamamlanamadı.', missing));
   return job.segments;
 }
 

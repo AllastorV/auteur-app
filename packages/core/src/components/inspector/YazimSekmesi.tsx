@@ -111,8 +111,8 @@ export function YazimSekmesi() {
                 key={ad}
                 type="button"
                 data-testid={`sayfa-rengi-${ad}`}
-                title={SAYFA_RENGI_ADLARI[ad]}
-                aria-label={`${t('Sayfa rengi')}: ${SAYFA_RENGI_ADLARI[ad]}`}
+                title={t(SAYFA_RENGI_ADLARI[ad])}
+                aria-label={`${t('Sayfa rengi')}: ${t(SAYFA_RENGI_ADLARI[ad])}`}
                 aria-pressed={secili}
                 onClick={() => useUiStore.setState({ scriptSayfaRengi: ad })}
                 className={

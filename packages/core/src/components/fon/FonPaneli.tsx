@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { Modal, Button } from '../dialogs/Modal';
 import { downloadBlob } from '../../util/indir';
 import { usePlatform } from '../../platform/context';
@@ -179,10 +179,10 @@ export function FonPaneli({ onClose }: { onClose: () => void }) {
           bytes, dosyaAdi: ad, turAdi: t('Başvuru paketi'), uzantilar: ['zip'],
         });
         if (res.cancelled) showToast(t('Dışa aktarma iptal edildi.'), 'info');
-        else if (res.path) showToast(`Kaydedildi: ${res.path}`, 'success');
+        else if (res.path) showToast(tf('Kaydedildi: %s', res.path), 'success');
       } else {
         downloadBlob(new Blob([bytes as BlobPart], { type: 'application/zip' }), ad);
-        showToast(`${ad} indirildi.`, 'success');
+        showToast(tf('%s indirildi.', ad), 'success');
       }
     } catch (err) {
       /* SESSİZ BAŞARISIZLIK YASAK: paket üretilemediyse kullanıcı bunu

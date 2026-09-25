@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { useUiStore, type LibraryTab } from '../../store/ui';
 import { useProjectStore, projectActions } from '../../store/project';
 import { CAMERA_CATEGORIES, CAMERA_PRESETS, kameraAdi, searchCameraPresets } from '../../data/cameras';
@@ -147,7 +147,7 @@ function CameraTab({ search, category }: { search: string; category: string }) {
                   key={preset.id}
                   draggable
                   onDragStart={(e) => setDragPayload(e, { type: 'camera', presetId: preset.id })}
-                  title={preset.description}
+                  title={t(preset.description)}
                   className="cursor-grab border border-kenar-denetim bg-etkin/60 p-2 transition hover:border-amber"
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -157,7 +157,7 @@ function CameraTab({ search, category }: { search: string; category: string }) {
                     </span>
                   </div>
                   <p className="text-[10px] text-metin-etiket">{preset.name}</p>
-                  <p className="mt-0.5 line-clamp-2 text-[10px] text-metin-zayif">{preset.description}</p>
+                  <p className="mt-0.5 line-clamp-2 text-[10px] text-metin-zayif">{t(preset.description)}</p>
                 </div>
               ))}
             </div>
@@ -218,8 +218,7 @@ function TemplateTab({ search, category }: { search: string; category: string })
       ))}
       {!results.length && <EmptyState />}
       <p className="pt-2 text-[10px] text-metin-etiket">
-        Toplam {TEMPLATES.length} şablon · {CAMERA_PRESETS.length} kamera preseti ·{' '}
-        {PROPS.length} obje
+        {tf('Toplam %d şablon · %d kamera preseti · %d obje', TEMPLATES.length, CAMERA_PRESETS.length, PROPS.length)}
       </p>
     </div>
   );

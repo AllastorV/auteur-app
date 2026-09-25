@@ -30,11 +30,11 @@ export function CopKutusuSekmesi() {
     const n = projectActions.copTemizle(doc);
     // Temizlik SESSİZ olmasın (§15) — kaç kayıt gittiği HER ZAMAN bildiriliyor,
     // 0 olsa bile: "temizlenecek bir şey yoktu" da bir sonuçtur.
-    showToast(n > 0 ? `${n} eski kayıt geri dönüşüm kutusundan temizlendi.` : t('Temizlenecek eski kayıt yok.'), 'info');
+    showToast(n > 0 ? tf('%d eski kayıt geri dönüşüm kutusundan temizlendi.', n) : t('Temizlenecek eski kayıt yok.'), 'info');
   };
 
   const kaliciSil = (oge: CopOgesi) => {
-    if (!window.confirm(`${copOzeti(oge)} KALICI olarak silinsin mi? Bu işlem GERİ ALINAMAZ.`)) return;
+    if (!window.confirm(tf('%s KALICI olarak silinsin mi? Bu işlem GERİ ALINAMAZ.', copOzeti(oge)))) return;
     projectActions.copKaliciSil(doc, oge.id);
   };
 
@@ -105,7 +105,7 @@ function copOzeti(oge: CopOgesi): string {
   }
   const b = oge.veri as ScriptBlock;
   const metin = b.text.trim();
-  return metin ? metin.slice(0, 60) : `(boş ${b.type})`;
+  return metin ? metin.slice(0, 60) : tf('(boş %s)', b.type);
 }
 
 function tarihFormatla(ms: number): string {

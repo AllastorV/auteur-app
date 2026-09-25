@@ -1,4 +1,5 @@
 import type { CipaKaydi, VeriGuvenligiKabugu } from '@storyboard/core/platform/types';
+import { t as ceviri } from '@storyboard/core/dil/arayuz';
 
 /**
  * §15 VERİ GÜVENLİĞİ — TARAYICI KATMANI (§17 borcu).
@@ -67,22 +68,22 @@ function db(): Promise<IDBDatabase> {
     istek.onsuccess = () => coz(istek.result);
     /* Hata YUTULMUYOR: depo açılamıyorsa koruma YOK demektir ve çağıran
        bunu kullanıcıya söylemek zorunda (§15.4). */
-    istek.onerror = () => red(istek.error ?? new Error('IndexedDB açılamadı'));
+    istek.onerror = () => red(istek.error ?? new Error(ceviri('IndexedDB açılamadı')));
   });
 }
 
 function bekle<T>(istek: IDBRequest<T>): Promise<T> {
   return new Promise((coz, red) => {
     istek.onsuccess = () => coz(istek.result);
-    istek.onerror = () => red(istek.error ?? new Error('IndexedDB isteği başarısız'));
+    istek.onerror = () => red(istek.error ?? new Error(ceviri('IndexedDB isteği başarısız')));
   });
 }
 
 function islemBitti(t: IDBTransaction): Promise<void> {
   return new Promise((coz, red) => {
     t.oncomplete = () => coz();
-    t.onerror = () => red(t.error ?? new Error('IndexedDB işlemi başarısız'));
-    t.onabort = () => red(t.error ?? new Error('IndexedDB işlemi iptal edildi'));
+    t.onerror = () => red(t.error ?? new Error(ceviri('IndexedDB işlemi başarısız')));
+    t.onabort = () => red(t.error ?? new Error(ceviri('IndexedDB işlemi iptal edildi')));
   });
 }
 
@@ -170,7 +171,7 @@ export function webGuvenlikDeposu(): VeriGuvenligiKabugu {
       const k = await bekle(t.objectStore(CIPA).get([projeId, id]) as IDBRequest<CipaKaydiDepo>);
       /* Bulunamayan çıpa SESSİZ dönmüyor: çağıran onu belge sanıp boş bir
          proje açardı ve kullanıcı işini kaybettiğini sanırdı. */
-      if (!k) throw new Error(`Çıpa bulunamadı: ${id}`);
+      if (!k) throw new Error(`${ceviri('Çıpa bulunamadı')}: ${id}`);
       return k.veri;
     },
 

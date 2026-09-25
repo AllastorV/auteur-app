@@ -5,6 +5,7 @@ import { usePlatform } from '../platform/context';
 import { useUiStore } from '../store/ui';
 import { oturumuKurtar, type OturumKurtarma } from '../veri/anlik';
 import { assetsMap } from '../doc/schema';
+import { t, tf } from '../dil/arayuz';
 
 /**
  * Açılışta kurtarma denetimi — §15.3.
@@ -129,8 +130,9 @@ export function useKurtarma(enabled: boolean): KurtarmaDurumu {
           const hedef = await kabuk.gunluguArsivle(projeId);
           if (!iptal && kurtarma.cozumlenen > 0) {
             useUiStore.getState().showToast(
-              `Önceki oturumdan ${kurtarma.cozumlenen} kayıt bulundu ama hiçbiri ` +
-                `uygulanamadı. Günlük silinmedi, arşive alındı${hedef ? `: ${hedef}` : ''}.`,
+              hedef
+                ? tf('Önceki oturumdan %d kayıt bulundu ama hiçbiri uygulanamadı. Günlük silinmedi, arşive alındı: %s.', kurtarma.cozumlenen, hedef)
+                : tf('Önceki oturumdan %d kayıt bulundu ama hiçbiri uygulanamadı. Günlük silinmedi, arşive alındı.', kurtarma.cozumlenen),
               'error',
             );
           }
@@ -172,9 +174,8 @@ export function useKurtarma(enabled: boolean): KurtarmaDurumu {
         if (!iptal) {
           const hedef = await kabuk.gunluguArsivle(projeId).catch(() => null);
           useUiStore.getState().showToast(
-            `Çökme kurtarma denetimi yapılamadı: ${
-              hata instanceof Error ? hata.message : String(hata)
-            }. ${hedef ? `Önceki oturumun günlüğü arşive alındı: ${hedef}` : 'Önceki oturumun günlüğü yerinde duruyor.'}`,
+            `${tf('Çökme kurtarma denetimi yapılamadı: %s', hata instanceof Error ? hata.message : String(hata))}. ${
+              hedef ? tf('Önceki oturumun günlüğü arşive alındı: %s', hedef) : t('Önceki oturumun günlüğü yerinde duruyor.')}`,
             'error',
           );
           setCozuldu();
@@ -208,9 +209,7 @@ export function useKurtarma(enabled: boolean): KurtarmaDurumu {
          eski çerçeveler duruyor. */
       await kabuk?.gunluguArsivle(projeId).catch(() => {});
       useUiStore.getState().showToast(
-        `Kurtarma diske yazılamadı: ${
-          hata instanceof Error ? hata.message : String(hata)
-        }. Önceki günlük arşive alındı.`,
+        `${tf('Kurtarma diske yazılamadı: %s', hata instanceof Error ? hata.message : String(hata))}. ${t('Önceki günlük arşive alındı.')}`,
         'error',
       );
     }
@@ -220,7 +219,7 @@ export function useKurtarma(enabled: boolean): KurtarmaDurumu {
   const yoksay = useCallback(() => {
     void platform.veriGuvenligi?.gunluguArsivle(projeId).catch((hata: unknown) =>
       useUiStore.getState().showToast(
-        `Günlük arşivlenemedi: ${hata instanceof Error ? hata.message : String(hata)}`,
+        tf('Günlük arşivlenemedi: %s', hata instanceof Error ? hata.message : String(hata)),
         'error',
       ),
     );

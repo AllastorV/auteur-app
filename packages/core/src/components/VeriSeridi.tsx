@@ -1,5 +1,5 @@
 import React from 'react';
-import { t } from '../dil/arayuz';
+import { t, tf } from '../dil/arayuz';
 import { KayitDurumu, type KayitDurumuAdi } from './KayitDurumu';
 import type { YaziciDurumu } from '../veri/yazici';
 
@@ -38,8 +38,7 @@ export function VeriSeridi({ durum }: { durum: YaziciDurumu | null }) {
         role="alert"
         className="shrink-0 bg-[#7a2b22] px-3 py-1.5 text-center text-[12px] font-medium text-[#ffe6e0]"
       >
-        Yazdıkların diske kaydedilemiyor: {durum.sonHata}. Projeni başka bir
-        yere kaydet — bu pencereyi kapatma.
+        {tf('Yazdıkların diske kaydedilemiyor: %s. Projeni başka bir yere kaydet — bu pencereyi kapatma.', durum.sonHata ?? '')}
       </div>
     );
   }

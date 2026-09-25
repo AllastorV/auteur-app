@@ -37,6 +37,7 @@ import {
 import { installMenu, menuDiliniAyarla, type ArayuzDili } from './menu';
 import { eskiKokuTasi } from './veri-tasima';
 import { iliskilendir } from './dosya-iliskilendirme';
+import { at } from './metin';
 
 /**
  * Ürün adı "Storyboard Stüdyo"dan "Auteur"e geçti (2026-08-27).
@@ -378,12 +379,12 @@ app.on('will-quit', () => discardAllFrames());
 /* IPC — proje dosyası                                                 */
 /* ------------------------------------------------------------------ */
 
-const SBP_FILTER = [{ name: 'Storyboard Projesi', extensions: ['sbp'] }];
+const SBP_FILTER = () => [{ name: at('Storyboard Projesi'), extensions: ['sbp'] }];
 
 ipcMain.handle('project:open-dialog', async () => {
   const res = await dialog.showOpenDialog({
-    title: 'Proje aç',
-    filters: SBP_FILTER,
+    title: at('Proje aç'),
+    filters: SBP_FILTER(),
     properties: ['openFile'],
   });
   if (res.canceled || !res.filePaths[0]) return null;
@@ -408,9 +409,9 @@ ipcMain.handle(
     let target: string;
     if (!payload.path || payload.saveAs) {
       const res = await dialog.showSaveDialog({
-        title: payload.saveAs ? 'Farklı kaydet' : 'Projeyi kaydet',
+        title: payload.saveAs ? at('Farklı kaydet') : at('Projeyi kaydet'),
         defaultPath: `${payload.projectName || 'storyboard'}.sbp`,
-        filters: SBP_FILTER,
+        filters: SBP_FILTER(),
       });
       if (res.canceled || !res.filePath) return { path: null, cancelled: true };
       target = allowFile(res.filePath);
@@ -574,7 +575,7 @@ function anahtarlariOku(): Record<string, string> {
 
 ipcMain.handle('dil:anahtar-yaz', async (_e, saglayici: string, anahtar: string) => {
   if (!safeStorage.isEncryptionAvailable()) {
-    throw new Error('Bu sistemde şifreli saklama yok; anahtar kaydedilmedi.');
+    throw new Error(at('Bu sistemde şifreli saklama yok; anahtar kaydedilmedi.'));
   }
   const id = safeHistoryId(saglayici, 'sağlayıcı adı');
   const hepsi = anahtarlariOku();
@@ -615,7 +616,7 @@ ipcMain.handle(
     payload: { bytes: Uint8Array; dosyaAdi: string; turAdi: string; uzantilar: string[] },
   ) => {
     const res = await dialog.showSaveDialog({
-      title: 'Dışa aktar',
+      title: at('Dışa aktar'),
       defaultPath: payload.dosyaAdi,
       filters: [{ name: payload.turAdi, extensions: payload.uzantilar }],
     });
@@ -629,9 +630,9 @@ ipcMain.handle(
   'export:png-zip',
   async (_e, payload: { frames: { fileName: string; dataUrl: string }[]; zipName: string }) => {
     const res = await dialog.showSaveDialog({
-      title: 'PNG dizisini kaydet',
+      title: at('PNG dizisini kaydet'),
       defaultPath: payload.zipName,
-      filters: [{ name: 'ZIP arşivi', extensions: ['zip'] }],
+      filters: [{ name: at('ZIP arşivi'), extensions: ['zip'] }],
     });
     if (res.canceled || !res.filePath) return { path: null, cancelled: true };
 
@@ -681,7 +682,7 @@ ipcMain.handle('export:video', async (_e, payload: any) => {
     : null;
   if (!outputPath) {
     const res = await dialog.showSaveDialog({
-      title: 'Animatiği kaydet',
+      title: at('Animatiği kaydet'),
       defaultPath: `animatik.${ext}`,
       filters: [{ name: ext.toUpperCase(), extensions: [ext] }],
     });
@@ -712,8 +713,8 @@ ipcMain.handle('export:cancel', async (_e, jobId: string) => {
 
 ipcMain.handle('export:pick-audio', async () => {
   const res = await dialog.showOpenDialog({
-    title: 'Ses dosyası seç',
-    filters: [{ name: 'Ses', extensions: ['mp3', 'wav', 'm4a', 'aac', 'ogg'] }],
+    title: at('Ses dosyası seç'),
+    filters: [{ name: at('Ses'), extensions: ['mp3', 'wav', 'm4a', 'aac', 'ogg'] }],
     properties: ['openFile'],
   });
   if (res.canceled || !res.filePaths[0]) return null;

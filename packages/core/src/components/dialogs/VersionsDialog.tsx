@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { Modal, Button } from './Modal';
 import { usePlatform } from '../../platform/context';
 import { useProjectStore } from '../../store/project';
@@ -69,7 +69,7 @@ export function VersionsDialog({ onClose }: { onClose: () => void }) {
       showToast(t('Sürüm geri yüklendi.'), 'success');
       onClose();
     } catch (err) {
-      showToast(`Geri yüklenemedi: ${(err as Error).message}`, 'error');
+      showToast(tf('Geri yüklenemedi: %s', (err as Error).message), 'error');
     } finally {
       setBusy(false);
     }
@@ -169,7 +169,7 @@ export function VersionsDialog({ onClose }: { onClose: () => void }) {
    kancaya dokunmaz. */
 /* ------------------------------------------------------------------ */
 
-const GUVENCE =
+const GUVENCE = (): string =>
   t('Geri dönmek yazdıklarını silmez — dönmeden önce şu anki hâlin de kaydedilir, istersen buraya geri gelebilirsin.');
 
 function NoktalarBolumu({ onClose }: { onClose: () => void }) {
@@ -184,7 +184,7 @@ function NoktalarBolumu({ onClose }: { onClose: () => void }) {
   }
 
   const tikla = async (id: string) => {
-    if (!window.confirm(`${GUVENCE}\n\nŞimdi bu ana dönülsün mü?`)) return;
+    if (!window.confirm(`${GUVENCE()}\n\n${t('Şimdi bu ana dönülsün mü?')}`)) return;
     const tamam = await durum.donusYap(id);
     if (tamam) onClose();
   };
@@ -202,7 +202,7 @@ function NoktalarBolumu({ onClose }: { onClose: () => void }) {
       >
         <Ikon ad="kilitli" boyut={14} renk="var(--mzn-amber)" />
         <p className="text-[12px] leading-relaxed text-metin-govde">
-          <b className="font-semibold text-amber">{t('Hiçbir şey kaybolmaz.')}</b> {GUVENCE}
+          <b className="font-semibold text-amber">{t('Hiçbir şey kaybolmaz.')}</b> {GUVENCE()}
         </p>
       </div>
 

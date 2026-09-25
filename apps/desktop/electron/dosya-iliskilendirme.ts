@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
+import { at } from './metin';
 
 /**
  * `.sbp` DOSYA İLİŞKİLENDİRMESİ — taşınabilir sürüm için.
@@ -101,10 +102,10 @@ export function iliskilendir(
   ikon: string | null = ikonYolunuBul(),
 ): IliskilendirmeSonucu {
   if (process.platform !== 'win32') {
-    return { ok: false, hata: 'Dosya ilişkilendirmesi yalnız Windows’ta yapılabiliyor.' };
+    return { ok: false, hata: at('Dosya ilişkilendirmesi yalnız Windows’ta yapılabiliyor.') };
   }
   if (!ikon) {
-    return { ok: false, hata: 'Dosya simgesi (dosya.ico) bulunamadı; ilişkilendirme yazılmadı.' };
+    return { ok: false, hata: at('Dosya simgesi (dosya.ico) bulunamadı; ilişkilendirme yazılmadı.') };
   }
   try {
     for (const [yol, ad, deger] of kayitlar(exeYolu, ikon)) yaz(yol, ad, deger);

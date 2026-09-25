@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { Modal, Button } from './Modal';
 import { usePlatform } from '../../platform/context';
 import { useProjectStore } from '../../store/project';
@@ -27,10 +27,10 @@ export function RecentDialog({ onClose }: { onClose: () => void }) {
         filePath: path,
         assets: assetUrlsFrom(bundle.assets),
       });
-      showToast(`Açıldı: ${bundle.project.meta.name}`, 'success');
+      showToast(tf('Açıldı: %s', bundle.project.meta.name), 'success');
       onClose();
     } catch (err) {
-      showToast(`Açılamadı: ${(err as Error).message}`, 'error');
+      showToast(tf('Açılamadı: %s', (err as Error).message), 'error');
     } finally {
       setBusy(false);
     }

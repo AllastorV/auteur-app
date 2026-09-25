@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { t, tf } from '../../dil/arayuz';
 import { useProjectStore } from '../../store/project';
 import { usePlatform } from '../../platform/context';
 import * as M from '../../doc/mutations';
@@ -90,7 +90,7 @@ export function SozlukBolumu() {
               <button
                 type="button"
                 data-testid={`sozluk-sil-${k}`}
-                aria-label={`${k} kelimesini sözlükten çıkar`}
+                aria-label={tf('%s kelimesini sözlükten çıkar', k)}
                 disabled={!duzenlenebilir}
                 className="text-metin-etiket hover:text-metin-guclu disabled:opacity-40"
                 onClick={() => M.sozluktenCikar(useProjectStore.getState().doc, k)}

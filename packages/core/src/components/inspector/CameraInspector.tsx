@@ -53,7 +53,7 @@ export function CameraInspector({
           }}
         />
       </Row>
-      {preset && <p className="pb-1 text-[10px] text-metin-zayif">{preset.description}</p>}
+      {preset && <p className="pb-1 text-[10px] text-metin-zayif">{t(preset.description)}</p>}
       <Row label={t('Renk')}>
         <ColorField value={object.color} disabled={!editable} onChange={(v) => patch({ color: v })} />
       </Row>

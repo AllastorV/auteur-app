@@ -4,6 +4,7 @@ import { HISTORY_DIR, RECENT_FILE, STARTUP_FILE } from './paths';
 /* Atomik yazma kendi modülünde yaşıyor: §15.5'in çökme testi onu Electron'suz
    bir alt süreçte yüklemek zorunda (bkz. `atomik.ts` başlığı). */
 import { writeFileAtomic } from './atomik';
+import { at } from './metin';
 
 export { writeFileAtomic } from './atomik';
 
@@ -141,7 +142,7 @@ export function writeVersion(
 
 export function listVersions(projectId: string): HistoryVersion[] {
   const dir = HISTORY_DIR(projectId);
-  let label = 'Otomatik kayıt';
+  let label = at('Otomatik kayıt');
   try {
     label = JSON.parse(fs.readFileSync(path.join(dir, 'meta.json'), 'utf8')).projectName ?? label;
   } catch {
@@ -161,7 +162,7 @@ export function listVersions(projectId: string): HistoryVersion[] {
         } catch {
           /* eş dosya yok — eski sürüm ya da yazan adı boş kaydedilmiş */
         }
-        return { id: f, savedAt, label: `${label} — otomatik kayıt`, size, savedBy };
+        return { id: f, savedAt, label: at('%s — otomatik kayıt', label), size, savedBy };
       })
       .sort((a, b) => b.savedAt - a.savedAt);
   } catch {

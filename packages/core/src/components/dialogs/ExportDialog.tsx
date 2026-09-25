@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { t } from '../../dil/arayuz';
+import { arayuzDili, t, tf } from '../../dil/arayuz';
 import { downloadBlob } from '../../util/indir';
 import { Modal, Button } from './Modal';
 import { Ikon, type IkonAdi } from '../Ikon';
@@ -19,7 +19,7 @@ import {
   segmentsDuration,
 } from '../../export/animatic';
 import { renderPanelToDataURL } from '../../export/renderPanel';
-import { DEFAULT_FILENAME_TEMPLATE, safeFileName } from '../../model/project-io';
+import { dosyaAdiDegiskenleri, safeFileName } from '../../model/project-io';
 import { pdfPaketiKur, type Kapsam } from '../../disa/paket';
 import type { StoryboardKare } from '../../disa/storyboard-pdf';
 import { pdfYaziTipleri } from '../../disa/yazitipi';
@@ -40,7 +40,7 @@ type StoryboardBicim = 'pdf' | 'png' | 'video';
 /* FONKSİYON, SABİT DEĞİL — dil değişiminde donmasın diye; gerekçenin
    tamamı `i18n-kapsam.test.ts`teki `donmusCeviriler` başlığında. */
 const SENARYO_BICIMLERI = (): { id: SenaryoBicim; etiket: string; uzanti: string; tur: string }[] => [
-  { id: 'pdf', etiket: 'PDF', uzanti: 'pdf', tur: 'PDF belgesi' },
+  { id: 'pdf', etiket: 'PDF', uzanti: 'pdf', tur: t('PDF belgesi') },
   { id: 'fountain', etiket: 'Fountain (.fountain)', uzanti: 'fountain', tur: t('Fountain metni') },
   { id: 'fdx', etiket: 'Final Draft (.fdx)', uzanti: 'fdx', tur: t('Final Draft senaryosu') },
   /* §16.2 borcu: bu üçü listede sayılıyordu ama yazılmamıştı. Roman
@@ -74,7 +74,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
   const [storyboardBicim, setStoryboardBicim] = useState<StoryboardBicim>('png');
   const [resolution, setResolution] = useState<ExportResolutionId>('1080p');
   const [transparent, setTransparent] = useState(false);
-  const [template, setTemplate] = useState(DEFAULT_FILENAME_TEMPLATE);
+  const [template, setTemplate] = useState(() => dosyaAdiDegiskenleri(arayuzDili()).varsayilan);
   const [format, setFormat] = useState<'mp4' | 'webm'>('mp4');
   const [fps, setFps] = useState<24 | 25 | 30>(project.settings.fps);
   const [audioPath, setAudioPath] = useState<string | null>(null);
@@ -160,7 +160,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
         renderPanel,
         signal: cancelRef.current,
         onProgress: (done, total) =>
-          setProgress({ done, total, message: `Panel ${done}/${total} işleniyor…` }),
+          setProgress({ done, total, message: tf('Panel %d/%d işleniyor…', done, total) }),
       });
       if (cancelRef.current.cancelled) {
         showToast(t('Dışa aktarma iptal edildi.'), 'info');
@@ -169,15 +169,15 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
       const zipName = `${safeFileName(project.meta.name)}_PNG.zip`;
       if (platform.kind === 'desktop') {
         const res = await platform.exportPngZip({ frames, zipName });
-        if (res.path) showToast(`PNG dizisi kaydedildi: ${res.path}`, 'success');
+        if (res.path) showToast(tf('PNG dizisi kaydedildi: %s', res.path), 'success');
       } else {
         const bytes = await zipFrames(frames, `${project.meta.name} — ${frames.length} panel`);
         downloadBlob(new Blob([bytes as BlobPart], { type: 'application/zip' }), zipName);
-        showToast(`${frames.length} panel ZIP olarak indirildi.`, 'success');
+        showToast(tf('%d panel ZIP olarak indirildi.', frames.length), 'success');
       }
       onClose();
     } catch (err) {
-      showToast(`Dışa aktarma hatası: ${(err as Error).message}`, 'error');
+      showToast(tf('Dışa aktarma hatası: %s', (err as Error).message), 'error');
     } finally {
       setBusy(false);
     }
@@ -201,7 +201,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
         renderPanel,
         signal: cancelRef.current,
         onProgress: (done, total) =>
-          setProgress({ done, total, message: `Panel ${done}/${total} işleniyor…` }),
+          setProgress({ done, total, message: tf('Panel %d/%d işleniyor…', done, total) }),
         onSegment: streaming
           ? (segment, index) =>
               platform.pushVideoFrame!({
@@ -225,8 +225,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
         if (payloadBytes > MAX_TRANSFER_BYTES) {
           const mb = Math.round(payloadBytes / (1024 * 1024));
           throw new Error(
-            `Kare verisi çok büyük (~${mb} MB). Çözünürlüğü düşürün, FPS'i azaltın ` +
-              `ya da geçiş sürelerini kısaltın.`,
+            tf('Kare verisi çok büyük (~%d MB). Çözünürlüğü düşürün, FPS\'i azaltın ya da geçiş sürelerini kısaltın.', mb),
           );
         }
       }
@@ -236,7 +235,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
       if (drift > 0.1) {
         // Kabul kriteri: ±100 ms. Aşılırsa kullanıcı uyarılır.
         showToast(
-          `Uyarı: kare listesi süresi zaman çizelgesinden ${(drift * 1000).toFixed(0)} ms sapıyor.`,
+          tf('Uyarı: kare listesi süresi zaman çizelgesinden %s ms sapıyor.', (drift * 1000).toFixed(0)),
           'error',
         );
       }
@@ -253,13 +252,13 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
         audioPath,
         expectedDuration: timelineTotal,
       });
-      if (res.path) showToast(`Animatik kaydedildi: ${res.path}`, 'success');
+      if (res.path) showToast(tf('Animatik kaydedildi: %s', res.path), 'success');
       else if (!res.cancelled) showToast(t('Video kaydedilmedi.'), 'info');
       onClose();
     } catch (err) {
       // Yarıda kalan işin diske yazılmış kareleri temizlenmeli.
       void platform.discardVideoFrames?.(jobId);
-      showToast(`Video hatası: ${(err as Error).message}`, 'error');
+      showToast(tf('Video hatası: %s', (err as Error).message), 'error');
     } finally {
       setBusy(false);
     }
@@ -277,11 +276,11 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
       if (platform.dosyaKaydet) {
         const res = await platform.dosyaKaydet({ bytes, dosyaAdi, turAdi, uzantilar: [uzanti] });
         if (res.cancelled) showToast(t('Dışa aktarma iptal edildi.'), 'info');
-        else if (res.path) showToast(`Kaydedildi: ${res.path}`, 'success');
+        else if (res.path) showToast(tf('Kaydedildi: %s', res.path), 'success');
         return !res.cancelled;
       }
       downloadBlob(new Blob([bytes as BlobPart], { type: mime }), dosyaAdi);
-      showToast(`${dosyaAdi} indirildi.`, 'success');
+      showToast(tf('%s indirildi.', dosyaAdi), 'success');
       return true;
     },
     [platform, showToast],
@@ -299,7 +298,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
       if (await dosyayiVer(bayt, ad, t('Word belgesi'), 'docx',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) onClose();
     } catch (err) {
-      showToast(`Dışa aktarım başarısız: ${(err as Error).message}`, 'error');
+      showToast(tf('Dışa aktarım başarısız: %s', (err as Error).message), 'error');
     } finally {
       setBusy(false);
     }
@@ -326,8 +325,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
            kullanıcı bunu dosyayı teslim etmeden ÖNCE bilmeli. */
         if (cikti.tutmayan.length > 0) {
           showToast(
-            `${cikti.tutmayan.length} blok Fountain'da tipini koruyamadı ` +
-              `(ilki: ${cikti.tutmayan[0].beklenen}). Dosya yine de yazıldı.`,
+            tf('%d blok Fountain\'da tipini koruyamadı (ilki: %s). Dosya yine de yazıldı.', cikti.tutmayan.length, cikti.tutmayan[0].beklenen),
             'error',
           );
         }
@@ -339,7 +337,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
       if (await dosyayiVer(new TextEncoder().encode(metin), ad, bicim.tur, bicim.uzanti, 'text/plain'))
         onClose();
     } catch (err) {
-      showToast(`Dışa aktarma hatası: ${(err as Error).message}`, 'error');
+      showToast(tf('Dışa aktarma hatası: %s', (err as Error).message), 'error');
     } finally {
       setBusy(false);
     }
@@ -361,7 +359,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
           renderPanel,
           signal: cancelRef.current,
           onProgress: (done, total) =>
-            setProgress({ done, total, message: `Panel ${done}/${total} çiziliyor…` }),
+            setProgress({ done, total, message: tf('Panel %d/%d çiziliyor…', done, total) }),
         });
         if (cancelRef.current.cancelled) {
           showToast(t('Dışa aktarma iptal edildi.'), 'info');
@@ -379,7 +377,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
         });
       }
 
-      setProgress({ done: 0, total: 1, message: 'PDF kuruluyor…' });
+      setProgress({ done: 0, total: 1, message: t('PDF kuruluyor…') });
       const paket = await pdfPaketiKur({
         kapsam,
         profil,
@@ -434,9 +432,9 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
           'error',
         );
       }
-      if (await dosyayiVer(paket.pdf, ad, 'PDF belgesi', 'pdf', 'application/pdf')) onClose();
+      if (await dosyayiVer(paket.pdf, ad, t('PDF belgesi'), 'pdf', 'application/pdf')) onClose();
     } catch (err) {
-      showToast(`PDF hatası: ${(err as Error).message}`, 'error');
+      showToast(tf('PDF hatası: %s', (err as Error).message), 'error');
     } finally {
       setBusy(false);
     }
@@ -468,7 +466,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
       if (senaryoBicim === 'pdf') return { calistir: pdfAktar, etiket: t('Senaryo PDF oluştur') };
       if (senaryoBicim === 'docx') return { calistir: docxAktar, etiket: t('Word belgesi oluştur') };
       const b = SENARYO_BICIMLERI().find((x) => x.id === senaryoBicim)!;
-      return { calistir: senaryoMetniAktar, etiket: `${b.etiket} oluştur` };
+      return { calistir: senaryoMetniAktar, etiket: tf('%s oluştur', b.etiket) };
     }
     if (storyboardBicim === 'pdf') return { calistir: pdfAktar, etiket: t('Storyboard PDF oluştur') };
     if (storyboardBicim === 'video') return { calistir: exportVideo, etiket: t('Animatik oluştur') };
@@ -800,7 +798,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
                 className="w-full bg-denetim px-2 py-1.5 text-xs outline-none"
               />
               <p className="mt-1 text-[10px] text-metin-etiket">
-                {t('Değişkenler')}: {'{sahne}'} {'{cekim}'} {'{panel}'} {'{ad}'} — {t('örn.')} S1_C3.png
+                {t('Değişkenler')}: {dosyaAdiDegiskenleri(arayuzDili()).adlar.map((a) => `{${a}}`).join(' ')} — {t('örn.')} S1_C3.png
               </p>
             </Field>
             <label className="flex items-center gap-2 text-xs text-metin-govde">
@@ -871,8 +869,7 @@ export function ExportDialog({ onClose }: { onClose: () => void }) {
 
             <p className="bg-etkin/60 px-3 py-2 text-[11px] text-metin-zayif">
               {t('Zaman çizelgesi toplamı:')} <strong className="text-metin-guclu">{formatDuration(timelineTotal)}</strong>{' '}
-              ({timelineTotal.toFixed(3)} sn) · {project.panels.length} panel. Geçişler kare kare
-              üretilir; çıktı süresi bu değerle ±100 ms içinde eşleşir.
+              {tf('(%s sn) · %d panel. Geçişler kare kare üretilir; çıktı süresi bu değerle ±100 ms içinde eşleşir.', timelineTotal.toFixed(3), project.panels.length)}
             </p>
           </>
         )}

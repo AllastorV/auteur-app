@@ -7,6 +7,7 @@ import tinosKalinUrl from '@expo-google-fonts/tinos/700Bold/Tinos_700Bold.ttf';
 import tinosItalikUrl from '@expo-google-fonts/tinos/400Regular_Italic/Tinos_400Regular_Italic.ttf';
 import type { PdfYaziTipleri } from './pdf';
 import type { YaziTipiAdi } from '../format/yazi';
+import { tf } from '../dil/arayuz';
 
 /**
  * PDF için Courier Prime TTF'ini getirir.
@@ -48,7 +49,7 @@ export function pdfYaziTipleri(ad: YaziTipiAdi = 'courier-prime'): Promise<PdfYa
       if (!yanit.ok) {
         /* Sessizce base-14'e düşmek YASAK: Türkçe harfler kaybolur ve kullanıcı
            bunu ancak dosyayı teslim ettikten sonra fark eder. */
-        throw new Error(`Yazı tipi yüklenemedi (${ad}, ${yanit.status}). PDF üretilemedi.`);
+        throw new Error(tf('Yazı tipi yüklenemedi (%s, %s). PDF üretilemedi.', ad, yanit.status));
       }
       return new Uint8Array(await yanit.arrayBuffer());
     };

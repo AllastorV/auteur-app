@@ -1,4 +1,5 @@
 import type { Onarim } from './sema';
+import { tf } from '../dil/arayuz';
 
 /**
  * Karar 10'un GÖRÜNMEYEN yarısı: onarım raporunun kullanıcıya ulaşması.
@@ -48,12 +49,11 @@ export function onarimMesaji(onarimlar: readonly Onarim[]): string {
   const o = onarimOzeti(onarimlar);
   if (o.toplam === 0) return '';
   const parcalar: string[] = [];
-  if (o.yinelenen > 0) parcalar.push(`${o.yinelenen} yinelenen`);
-  if (o.kimliksiz > 0) parcalar.push(`${o.kimliksiz} eksik`);
-  return (
-    `Belge açılırken ${o.toplam} blok kimliği onarıldı (${parcalar.join(', ')}). ` +
-    `Metin kaybı yok — onarım yalnız kimliklere dokundu; panel bağları ` +
-    `etkilenmiş olabilir. Kaydettiğinde onarım kalıcı olur.`
+  if (o.yinelenen > 0) parcalar.push(tf('%d yinelenen', o.yinelenen));
+  if (o.kimliksiz > 0) parcalar.push(tf('%d eksik', o.kimliksiz));
+  return tf(
+    'Belge açılırken %d blok kimliği onarıldı (%s). Metin kaybı yok — onarım yalnız kimliklere dokundu; panel bağları etkilenmiş olabilir. Kaydettiğinde onarım kalıcı olur.',
+    o.toplam, parcalar.join(', '),
   );
 }
 

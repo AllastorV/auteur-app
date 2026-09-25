@@ -5,6 +5,7 @@ import { useUiStore } from '../store/ui';
 import { useCollabStore } from '../store/collab';
 import { usePlatform } from '../platform/context';
 import { collectAssets } from '../util/assets';
+import { tf } from '../dil/arayuz';
 
 export const AUTOSAVE_INTERVAL_MS = 60_000;
 
@@ -44,7 +45,7 @@ export function useAutosave(enabled: boolean) {
           warned.current = true;
           useUiStore
             .getState()
-            .showToast(`Otomatik kayıt başarısız: ${(err as Error).message}`, 'error');
+            .showToast(tf('Otomatik kayıt başarısız: %s', (err as Error).message), 'error');
         }
       } finally {
         busy.current = false;

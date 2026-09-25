@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { usePlatform } from '../platform/context';
 import { useProjectStore } from '../store/project';
 import { useUiStore } from '../store/ui';
+import { tf } from '../dil/arayuz';
 
 /**
  * Proje sözlüğünü ve denetim dilini KABUĞA taşır — §16.4.
@@ -33,7 +34,7 @@ export function useDilKabugu(): void {
        veri yolu değil. Kullanıcı yazmaya devam edebilmeli. */
     void kabuk.sozlugüYükle(kelimeler).catch((hata: unknown) =>
       useUiStore.getState().showToast(
-        `Sözlük denetleyiciye yüklenemedi: ${hata instanceof Error ? hata.message : String(hata)}`,
+        tf('Sözlük denetleyiciye yüklenemedi: %s', hata instanceof Error ? hata.message : String(hata)),
         'error',
       ),
     );

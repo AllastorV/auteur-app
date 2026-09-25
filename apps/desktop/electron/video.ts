@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import ffmpeg from 'fluent-ffmpeg';
 import { ffmpegPath } from './paths';
+import { at } from './metin';
 
 /**
  * ffmpeg ikili yolu dışarıdan verilebilir; Electron dışında (testlerde)
@@ -142,7 +143,7 @@ function writeFrameSequence(dir: string, segments: VideoSegment[], fps: number):
 function linkFrameSequence(dir: string, segments: DiskSegment[], fps: number): FrameSequence {
   for (const seg of segments) {
     if (!fs.existsSync(seg.file)) {
-      throw new Error('Kare dosyası bulunamadı — dışa aktarma yarıda kalmış olabilir.');
+      throw new Error(at('Kare dosyası bulunamadı — dışa aktarma yarıda kalmış olabilir.'));
     }
   }
   return buildSequence(dir, segments.map((s) => s.file), frameCounts(segments, fps));
@@ -164,18 +165,18 @@ export async function renderVideo(
   onProgress: (p: ProgressEvent) => void,
 ): Promise<string> {
   const bin = resolveFfmpeg();
-  if (!bin) throw new Error('Gömülü ffmpeg bulunamadı.');
+  if (!bin) throw new Error(at('Gömülü ffmpeg bulunamadı.'));
   ffmpeg.setFfmpegPath(bin);
 
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sbstudio-'));
   running.set(job.jobId, { command: null, cancelled: false, dir });
 
   try {
-    onProgress({ jobId: job.jobId, phase: 'hazirlik', percent: 5, message: 'Kareler hazırlanıyor…' });
+    onProgress({ jobId: job.jobId, phase: 'hazirlik', percent: 5, message: at('Kareler hazırlanıyor…') });
     const sequence = job.diskSegments?.length
       ? linkFrameSequence(dir, job.diskSegments, job.fps)
       : writeFrameSequence(dir, job.segments ?? [], job.fps);
-    if (sequence.count === 0) throw new Error('Dışa aktarılacak kare yok.');
+    if (sequence.count === 0) throw new Error(at('Dışa aktarılacak kare yok.'));
     if (running.get(job.jobId)?.cancelled) throw new Error('İptal edildi');
 
     const total = sequence.count / job.fps;
@@ -222,7 +223,7 @@ export async function renderVideo(
             jobId: job.jobId,
             phase: 'kodlama',
             percent: Math.max(5, percent),
-            message: `Kodlanıyor… ${percent.toFixed(0)}%`,
+            message: at('Kodlanıyor… %s%', percent.toFixed(0)),
           });
         })
         .on('error', (err: Error) => {
@@ -242,7 +243,7 @@ export async function renderVideo(
     if (running.get(job.jobId)?.cancelled) {
       // Yarım dosya hedefe HİÇ ulaşmaz; geçici dosya temizlenir.
       fs.rmSync(geciciCikti, { force: true });
-      onProgress({ jobId: job.jobId, phase: 'iptal', percent: 0, message: 'İptal edildi.' });
+      onProgress({ jobId: job.jobId, phase: 'iptal', percent: 0, message: at('İptal edildi.') });
       throw new Error('İptal edildi');
     }
 
@@ -253,7 +254,7 @@ export async function renderVideo(
       jobId: job.jobId,
       phase: 'tamamlandi',
       percent: 100,
-      message: `Tamamlandı — hedef süre ${job.expectedDuration.toFixed(2)} sn`,
+      message: at('Tamamlandı — hedef süre %s sn', job.expectedDuration.toFixed(2)),
     });
     return job.outputPath;
   } finally {
